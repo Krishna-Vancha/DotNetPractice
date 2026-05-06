@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ConsoleApp1
+namespace ConsoleApp1.CSharpPractise.DataStructures.Collections
 {
     internal class Collections
     {

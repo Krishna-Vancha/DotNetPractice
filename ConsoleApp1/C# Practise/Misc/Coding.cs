@@ -1,11 +1,11 @@
-﻿#define DEBUG  // Preprocessor directive to enable testing code
+#define DEBUG  // Preprocessor directive to enable testing code
 using System;
 using System.Collections.Generic;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading;
 
-namespace ConsoleApp1
+namespace ConsoleApp1.CSharpPractise.Misc
 {
     [Flags]
     public enum UserPermissions

@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ConsoleApp1
+namespace ConsoleApp1.CSharpPractise.ValueTypes
 {
     internal class ValueDatatypes
     {

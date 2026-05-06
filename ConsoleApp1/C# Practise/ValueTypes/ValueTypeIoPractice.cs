@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace ConsoleApp1;
+namespace ConsoleApp1.CSharpPractise.ValueTypes;
 
 /// <summary>
 /// Call ValueTypeIoPractice.Run() from any Main to practise console I/O for value types.

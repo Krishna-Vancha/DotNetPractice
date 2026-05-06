@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ConsoleApp1
+namespace ConsoleApp1.CSharpPractise.DataStructures.Arrays
 {
     /* DataStructures — array cheat sheet in code + comments below.
        Run Main() to see 1D, rectangular/jagged, then System.Array helpers. */
@@ -15,25 +15,8 @@ namespace ConsoleApp1
             ArrayInbuiltFunctions();
         }
 
-        /*
-         Points to remember about arrays (syntax + behavior):
-         - Single-dimensional: T[] / new T[size] / new T[] { a,b } / T[] x = [ a,b ];  (collection expression)
-         - Rectangular (2D+): T[,] or T[,,]; new T[rows, cols]; index: arr[i, j];  rows = GetLength(0), cols = GetLength(1)
-         - Jagged (array of arrays): T[][]; new T[][] { new T[] { }, new T[] { } }; index: arr[i][j]; row count = Length, row i width = arr[i].Length
-         - Rectangular vs jagged: [,] is one contiguous block (fixed “rectangle”); [][] is an array of row arrays (ragged rows, each row can differ; row can be null until assigned)
-         - int[,] has no 1D-style range slice (arr[a..b]); use nested indices or copy out to a 1D buffer if you need a flat view
-         - Length vs GetLength: 1D → .Length = element count; T[,] → .Length = product of all dims; per-dimension size → always GetLength(dim)
-         - Zero-based indexing everywhere; out-of-range index → IndexOutOfRangeException
-         - Fixed size: T[] length is set at creation; “resize” = new array + copy, or Array.Resize(ref arr, newSize) (mutates ref, copies what fits)
-         - Reference type: the variable holds a reference; assignment copies the reference (two vars → same array) unless you Clone or copy elements
-         - Covariance (reference types only): e.g. string[] is assignable to object[]; writing wrong element type throws ArrayTypeMismatchException at runtime
-         - Clone(): shallow copy (new array, same element references); for int[] same as new values; for object[] elements are not cloned
-         - Ranges / index-from-end (1D): arr[start..end] end is exclusive; arr[^1] last; slice creates a new array copy for T[] (not a view)
-         - params T[]: last parameter can absorb call-site arguments as an array
-         - Common System.Array: Sort, BinarySearch (sorted; if not found returns negative ~insertion point), IndexOf/LastIndexOf, Reverse, Clear, Copy, Fill,
-           Exists/Find/FindIndex/FindLast/FindLastIndex/FindAll/TrueForAll, ForEach, Empty<T>
-         - Span: arr.AsSpan(), arr.AsSpan(start, length), or implicit span from stackalloc (stack buffer, not a managed array)
-        */
+        // Arrays: syntax, Range/Span, System.Array — see `PointsToRemember.md` in the repository root (section **Programming → Arrays**).
+
         public static void showOneDimensionalArrays()
         {
             // How do I allocate a fixed length — all elements default (0 for int)?
