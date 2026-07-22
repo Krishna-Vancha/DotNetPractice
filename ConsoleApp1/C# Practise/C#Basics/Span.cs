@@ -7,7 +7,7 @@ namespace ConsoleApp1.CSharpPractise.Advanced;
  * =============================================================================
  * Span<T> and Memory<T> — study notes (High-Performance C#)
  * =============================================================================
- *
+ *QuickRecap: reference struct that doesnot create memory just points , Span<T> , ReadOnlySpan<T>, .Slice(start,Length), index access []
  * 1) What is Span<T>?
  * - A "ref struct" that provides a window into contiguous memory **No Memory Allocation Happens just points to memory**.
  * - Performance: Avoids heap allocations and data copying during "slicing."

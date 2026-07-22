@@ -14,7 +14,6 @@
     <Folder Include="C# Practise\DataStructures\Strings\" />
     <Folder Include="C# Practise\DataStructures\Tuples\" />
     <Folder Include="C# Practise\ValueTypes\" />
-    <Folder Include="C# Practise\Misc\" />
   </ItemGroup>
 
 </Project>

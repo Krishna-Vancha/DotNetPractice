@@ -23,13 +23,14 @@ namespace ConsoleApp1.C__Practise.OOPs_Concepts
      * 3. Access (inheritance-related)
      *    - public — everywhere; protected — type + derived; private — not visible in derived code.
      *
+     *Syntax: class Derived : Base { },  constructor public Derived(string name) : base(name) { }, override, virtual, new (on methods), base(params/optional) for constructor/methods/dataitems
      * 4. virtual and override (polymorphism)
      *    - virtual on base: implementation may be replaced in derived.
      *    - override in derived: runtime dispatch — Employee e = new Manager(); e.DisplayInfo();
      *      runs Manager if DisplayInfo is virtual/override.
      *
      * 5. Method hiding — new
-     *    - new on derived method: intentionally same name/signature as base; hides base member.
+     *    - new on derived method: intentionally same name/signature as base; hides base member.    //rememeber new key word in inheritance is used to hide the base class method, and it is not an override, so it does not participate in runtime polymorphism.
      *    - Not object creation — signals intent and fixes hiding warnings.
      *    - Employee e = new Manager(); e.MethodHide(); — if non-virtual + new in Manager,
      *      runs Employee’s method; ((Manager)e).MethodHide() runs Manager’s.

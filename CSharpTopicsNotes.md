@@ -1,90 +1,51 @@
 # C# notes
 
+## Topics
+
+Master list of topics covered in this file. Each item links to a full section below (search the heading name).
+
+### C# concepts
+
+1. Optional parameters  
+2. Value types and reference types  
+3. ref, in, and out parameters  
+4. Structs  
+5. Type casting  
+6. Type conversion  
+7. The `is` operator  
+8. The `as` operator (safe casting)  
+9. Discards `_` / `_ =`  
+10. Keywords (const, readonly, yield, typeof, nameof, sizeof, default, init, sealed, Span, WinForms, extern, dynamic)  
+11. Nullable in C#
+
+### OOP
+
+12. Encapsulation (data hiding, private fields, validation via methods/properties)  
+13. Abstraction (hide complexity; interfaces, public contracts vs hidden implementation)  
+14. Inheritance (concepts, keywords)  
+15. Polymorphism — static and dynamic (overview)  
+16. Method and constructor overloading  
+17. Method overriding  
+18. Interfaces (C# 8+ / 11+)  
+19. Delegates (types, built-ins, variance, multicast)  
+20. Lambdas  
+21. Events  
+22. Exceptions
+
+### Advanced & collections
+
+23. IEnumerable  
+24. Reflection  
+25. Span<T> / ReadOnlySpan<T>  
+26. Expression-bodied members (vs lambdas)  
+27. Data boxing and unboxing  
+28. LINQ (Language Integrated Query)
+
+---
+
 ## Index
 
-Each topic has its own section below so you can scan and revise one topic at a time.
-
-### **Topics**
-
-Each topic: heading line, then comma-separated “flash” notes on the next line.
-
-**1. Optional parameters :**
-
-use `=` for default in declaration , use `name:` to pass a named arg at the call site , `int x = default` here `x` is `0` (type’s default) , defaults are compile-time constants
-
-**2. Value types and reference types :**
-
-value = often stack/inlined , assign copies bits , ref type = ref to heap (usually) , `string` ref + immutable
-
-**3. ref, in, and out parameters :**
-
-`ref` = alias read/write must assign before call , `out` = must assign in callee Try-pattern , `in` = by-ref read-only big struct
-
-**4. Structs :**
-
-value type no class inheritance , copy cost , `readonly` / `ref` struct / `record struct` = special flavors
-
-**5. Type casting :**
-
-`(T)` explicit , upcast free , downcast/unbox can throw `InvalidCast` , `checked` overflow option
-
-**6. Type conversion :**
-
-`TryParse` safe from strings , `Parse` throws , `Convert.*` for mixed/rounding — pick culture
-
-**7. The `is` operator :**
-
-`is T x` binds + test , `is not null` , no exception if false
-
-**8. The `as` operator (safe casting) :**
-
-ref + nullable: `x as T` or null , value unbox: `as int?` not `as int`
-
-**9. Delegates :**
-
-single/ mul;ticast , .Invoke(), can assign method or new DelegateName();, Covarience, contra varience , `Func` last type = return , `Action` void , Predicate , multicast `+=` / `-=` , non-void = last return only from `Invoke`
-
-**10. Inheritance (concepts, keywords) :**
-
-`virtual`/`override` = runtime through base ref , `new` = hide compile-time type matters , `base()` ctor chain , upcast only without cast
-
-**11. Interfaces (C# 8+ / 11+) :**
-
-instance `void M()` not implemented by `static` method; default + `static` on interface; `static abstract` generic patterns (C# 11) — *see* `IntefaceTheory` / BCL docs
-
-**12. Discards `_` / `_ =` :**
-
-`out _` unused out , deconstruction ignore , `_ = r` “evaluate but drop” to silence unused — not the same as `var`, if a variable is declared and not used compiler throws waring , to avoid that use _=
-
-**13. Delegates — types, built-ins, variance, lambdas :**
-
-custom `delegate` types vs `Func` / `Action` / `Predicate` , covariance/contravariance when assigning compatible method groups
-
-**14. Lambdas :**
-
-**15. Events :**
-
-Observer pattern (publisher/subscriber) , `event` keyword on delegate-like field , `EventHandler<CustomEventArgs>` , derive `CustomEventArgs` from `EventArgs` to send data when raised , event (delegate) owned by publisher — publisher triggers , subscriber contains / registers handlers for that event (`+=`)
-
-**16. Exceptions (OOP) :**
-
-`try` / `catch` / `finally` / `throw` — no checked exceptions (unlike Java); derive custom types from `Exception` for domain errors , **catch order** = most-specific subtype **before** base types (polymorphism / `is`-hierarchy) , `catch (Exception ex) when (predicate)` for filters , bare `throw;` rethrows **preserving stack trace** , `throw ex;` **resets** stack — avoid , wrap / chain with `InnerException` , `finally` runs on all exit paths (including `return`) for cleanup
-
-**17. KeyWords:** readonly, const, Yield, _=, 
-
-**18. IEnumerable :**
-
-`IEnumerable` / `IEnumerable<T>` — read-only forward-only sequence; **`foreach`** uses `GetEnumerator()` then **`MoveNext()`** / **`Current`** (or pattern-based dispose) , **`IEnumerator`** / **`IEnumerator<T>`** — `Current`, `MoveNext()`, `Reset` (legacy); **`IDisposable`** on generic enumerator , **`yield return`** / **`yield break`** — compiler iterator state machine , **LINQ / deferred execution** — many ops return `IEnumerable`; runs when you enumerate , **`IEnumerable<out T>`** — covariance (e.g. assign `IEnumerable<Derived>` to `IEnumerable<Base>`)
-
-**19. Reflection :**
-
-**Quick review / subtopics:** Reflection , Assembly , Type , MemberInfo , BindingFlags , late binding , dynamic invocation , attributes , performance overhead , real-world use cases , security concerns — **`System.Reflection`** inspects **metadata** and interacts with types **at runtime** even when they were unknown at compile time.
-
-*Source:* `ConsoleApp1\C# Practise\Advanced\ReflectionTheory.cs` (comment lines 12–18).
-
-**20. Span<T> / ReadOnlySpan<T> :**
-
-*QuickRecap:* reference struct / `ref struct` that does not create new memory; it just points to existing contiguous memory , `Span<T>` , `ReadOnlySpan<T>` , `.Slice(start, length)` , index access `[]`
+Each topic has its own section below so you can scan and revise one topic at a time. Use **Topics** above for the grouped list; use the sections under this index for full notes and flash summaries.
 
 ### **Exceptions**
 
@@ -97,6 +58,48 @@ Observer pattern (publisher/subscriber) , `event` keyword on delegate-like field
 In C#, exceptions use try–catch–finally: **try** holds risky code, **catch** handles errors, and **finally** always runs for cleanup. **`throw;`** preserves the original stack trace; **`throw new Exception`** creates a new throw site. For performance, **`TryParse`** is preferred over exceptions for validation. Use **`when`** for conditional catching. **Custom exceptions** define domain-specific errors.
 
 *Source:* `ConsoleApp1\C# Practise\OOPs-Concepts\ExceptionsTheory.cs` (comment lines 10–13).
+
+### **Polymorphism**
+
+**QuickReview / subtopics:** static (compile-time) vs dynamic (runtime); method overloading; constructor overloading; method overriding (`virtual` / `override` / `sealed`); reference type vs object type rule.
+
+**Static polymorphism** — compiler picks overload at compile time from name + parameter types/count/order; includes **method overloading** and **constructor overloading**; optional implicit widening (e.g. `int` → `double`) when no exact match.
+
+**Dynamic polymorphism** — runtime dispatch via virtual method table; base reference + derived object → **which method runs** follows **object type**; **member visibility** follows **reference type**; requires `virtual` / `abstract` / `override` in C#.
+
+**Overriding** — `override` replaces base behavior; `new` hides without overriding; `sealed override` stops further overrides.
+
+*Source:* `ConsoleApp1\C# Practise\OOPs-Concepts\OppsTheory.cs` (comment lines 10–38).
+
+### **Inheritance (types)**
+
+**QuickReview / subtopics:** single (one base class); multilevel chain (`Device` → `Phone` → `SmartPhone`); hierarchical (many children, one base); multiple classes **not** allowed — use multiple **interfaces**; diamond problem avoided.
+
+*Source:* `ConsoleApp1\C# Practise\OOPs-Concepts\InheritanceTheory.cs` — `RunDemo()`. *Also:* `InheritenceTheory.cs` (Employee/Manager, `virtual`/`override`/`new`).
+
+### **Keywords**
+
+**QuickReview / subtopics:** const, readonly, yield, typeof, nameof, sizeof, default, init, sealed, `Span<T>`, WinForms, extern + DllImport, dynamic (late binding).
+
+*Source:* `ConsoleApp1\C# Practise\C#Basics\KeyWords.cs` (study notes + `RunSealedDemo`, `SecurityUtilities`).
+
+### **Expression-bodied members**
+
+**QuickReview / subtopics:** `=>` syntax; single-expression bodies; methods, properties, accessors, constructors; implicit `return`; vs lambda expressions (`Func`/`Action`, closures).
+
+*Source:* `ConsoleApp1\C# Practise\Advanced\ExpressionBodiedTheory.cs` — `RunDemo()`, `UserProfile`, `MemberVsLambdaDemo`.
+
+### **Data boxing and unboxing**
+
+**QuickReview / subtopics:** value → `object` (implicit boxing, heap alloc); unbox with explicit cast; `InvalidCastException` on type mismatch; GC cost; prefer `List<T>` over `ArrayList`; avoid invisible boxing in string concat.
+
+*Source:* `ConsoleApp1\C# Practise\Advanced\BoxingTheory.cs` — `RunDemo()`.
+
+### **LINQ**
+
+**QuickReview / subtopics:** `IEnumerable<T>` / `IQueryable<T>`; deferred execution; Where, Select, OrderBy, GroupBy, Sum/Count/Average; Any/All/Contains; First/Last/Single; Take/Skip; Distinct/Union/Intersect/Except; Join.
+
+*Source:* `ConsoleApp1\C# Practise\Advanced\LinqTheory.cs` — `RunAllDemos()` (10 section demos).
 
 ------------------------------------------------------------------------------------------------------------------------
 
@@ -111,6 +114,428 @@ In C#, exceptions use try–catch–finally: **try** holds risky code, **catch**
 **Members:** `ex.Message`, `ex.StackTrace`; **custom exceptions** inherit `Exception`.
 
 In C#, exceptions use try–catch–finally: **try** holds risky code, **catch** handles errors, and **finally** always runs for cleanup. **`throw;`** preserves the original stack trace; **`throw new Exception`** creates a new throw site. For performance, **`TryParse`** is preferred over exceptions for validation. Use **`when`** for conditional catching. **Custom exceptions** define domain-specific errors.
+
+------------------------------------------------------------------------------------------------------------------------
+
+## Polymorphism
+
+*Quick revision — static vs dynamic; overloading vs overriding*
+
+**Definition:** One interface, many forms — the same operation can behave differently depending on type, signature, or runtime object.
+
+### 1. Static polymorphism (compile-time / early binding)
+
+- The **compiler** chooses the exact method or constructor **before** the program runs.
+- Resolution uses **method name** + **parameter types**, **count**, and **order** (the signature).
+- **No runtime lookup** for which overload — faster at call sites.
+- **Examples:** **method overloading**, **constructor overloading**.
+- If there is no exact match, the compiler may apply **implicit conversions** (e.g. promote `int` to `double` to match another overload).
+
+```csharp
+public int Sum(int a, int b) => a + b;
+public double Sum(double a, int b, int c) => a + b + c;
+// Sum(5, 6)     → int, int overload
+// Sum(5, 6, 7)  → may use double, int, int overload (first arg widened)
+```
+
+### 2. Method overloading
+
+- **Same method name**, **different parameter lists** in the **same** type (or inherited overloads visible to the caller).
+- Return type **alone** does not distinguish overloads — signatures must differ.
+- Used for APIs that do the same logical thing with different inputs (e.g. `Write(string)` vs `Write(byte[])`).
+
+### 3. Constructor overloading
+
+- **Same type name** as the class; multiple constructors with **different parameter lists**.
+- **`this(...)`** chains to another constructor in the same class; **`base(...)`** chains to a base-class constructor.
+- Lets callers construct objects in different ways (`new Point()`, `new Point(1, 2)`).
+
+### 4. Dynamic polymorphism (runtime / late binding)
+
+- The method executed is chosen at **runtime** from the **actual object type** on the heap (virtual dispatch / V-table).
+- **Base reference, derived object:** `Base b = new Derived(); b.M();` — if `M` is **overridden**, **Derived**’s `M` runs; if only **hidden** with `new`, behavior depends on **reference** type at compile time for that call.
+- **C# contract:** base member must be **`virtual`**, **`abstract`**, or already **`override`**; derived uses **`override`** to replace behavior.
+
+### 5. Method overriding
+
+| Keyword | Role |
+|--------|------|
+| **`virtual`** | Base allows derived to **override** |
+| **`override`** | Derived **replaces** base implementation |
+| **`sealed override`** | Override allowed here, **no further** override in subclasses |
+| **`new`** | **Hides** base member; **not** dynamic override — call through base ref uses base unless cast |
+
+```csharp
+public class Parent
+{
+    public virtual void Display() => Console.WriteLine("Parent");
+}
+public class Child : Parent
+{
+    public override void Display() => Console.WriteLine("Child");
+}
+Parent p = new Child();
+p.Display(); // "Child" — runtime type wins for virtual/override
+```
+
+### 6. Reference type vs object type (interview rule)
+
+- **`Base b = new Derived();`**
+- **Which members you can name** (visibility): **reference type** (`Base`).
+- **Which overridden method runs:** **object creation type** (`Derived`) for `virtual`/`override`.
+- **`new` hiding:** calling through `Parent` reference may still invoke **Parent**’s method even if object is `Child`.
+
+### 7. Static vs dynamic — quick compare
+
+| | Static (overloading) | Dynamic (overriding) |
+|--|---------------------|----------------------|
+| **When resolved** | Compile time | Runtime |
+| **Mechanism** | Signature match | `virtual` / `override` |
+| **Same name** | Yes, different parameters | Yes, same signature in hierarchy |
+| **Typical keywords** | (none required) | `virtual`, `override`, `sealed` |
+
+*Practice / demos:* `ConsoleApp1\C# Practise\OOPs-Concepts\OppsTheory.cs` — `RunAllDemos()`, `StaticPolymorphismDemo`, `ParentClass` / `ChildClass`.
+
+------------------------------------------------------------------------------------------------------------------------
+
+## Inheritance (types in C#)
+
+*Quick revision — single, multilevel, hierarchical, interfaces vs multiple class bases (`InheritanceTheory.cs`)*
+
+### 1. Single inheritance (supported)
+
+- A derived class inherits from **exactly one** base class: `class Phone : Device`.
+- C# allows **single class inheritance** to avoid the **diamond problem** (two bases with the same method name → ambiguity).
+
+### 2. Multilevel inheritance (supported)
+
+- Linear chain: `SmartPhone` → `Phone` → `Device`.
+- `SmartPhone` sees members from the whole chain (`TurnOn`, `MakeCall`, `Browse`).
+
+```csharp
+public class Device { public void TurnOn() { } }
+public class Phone : Device { public void MakeCall() { } }
+public class SmartPhone : Phone { public void Browse() { } }
+```
+
+### 3. Hierarchical inheritance (supported)
+
+- **Multiple** derived classes share **one** base: `SmartPhone` and `Laptop` both extend `Device`, but not each other.
+
+### 4. Multiple inheritance (classes: not supported; interfaces: supported)
+
+- **Invalid:** `class TechGadget : Device, Phone` — compile error (only one base class).
+- **Valid:** `class TechGadget : Device, IWifiConnectable, ICamera` — one class + many interfaces.
+
+| Type | Supported in C#? | Mechanism |
+|------|------------------|-----------|
+| Single | Yes | `class D : B` |
+| Multilevel | Yes | Chain of `:` |
+| Hierarchical | Yes | Many `: B` |
+| Multiple (classes) | No | Use interfaces |
+| Multiple (interfaces) | Yes | `class C : B, I1, I2` |
+
+*Practice:* `InheritanceTheory.RunDemo()` — also called from `OppsTheory.RunAllDemos()`.  
+*Related:* **Polymorphism**, **Interfaces**, `InheritenceTheory.cs` (Employee/Manager, `base`, `virtual`, `override`, `new`).
+
+*Code reference:* `ConsoleApp1\C# Practise\OOPs-Concepts\InheritanceTheory.cs`
+
+------------------------------------------------------------------------------------------------------------------------
+
+## Keywords
+
+*Quick revision — C# keywords and related features from `KeyWords.cs`*
+
+### 1. `const`
+
+- Value fixed at **compile time**; must be initialized where declared.
+- **Implicitly static** (no instance `const` fields).
+- Allowed types: primitives, `enum`, `string`, `null` for reference types where applicable, and other const-dependent constants — **not** arbitrary runtime objects.
+
+### 2. `readonly`
+
+- For **fields**: can be assigned in declaration or in constructors (instance or static depending on field); value fixed after construction completes.
+- Broader type surface than `const` — reference types, structs, etc.
+
+### 3. `const` vs `readonly` (quick compare)
+
+| | **const** | **readonly** |
+|---|-----------|--------------|
+| When fixed | Compile time | After construction |
+| Typical use | Literals, fixed config | Instance config set once in ctor |
+
+### 4. `yield` (`yield return` / `yield break`)
+
+- Used in **iterator** methods returning `IEnumerable` / `IEnumerator` / async streams.
+- Compiler builds a **state machine** — lazy evaluation (values produced on demand).
+
+### 5. `typeof`
+
+- `Type t = typeof(string);` — obtains `System.Type` at **compile time** for a type known in source (metadata token).
+
+### 6. `nameof`
+
+- `nameof(myVar)` / `nameof(MyType.Member)` — string name at **compile time**; safe for refactors (`ArgumentException`, logging, `INotifyPropertyChanged`).
+
+### 7. `sizeof`
+
+- `sizeof(int)` — size in bytes for **unmanaged value types** (unsafe-context rules apply for some types in older language versions).
+
+### 8. `default`
+
+- `default` / `default(T)` — type’s default value (`0`, `false`, `null` for refs, etc.).
+- **Default inference** with target typing in modern C#.
+
+### 9. `init`
+
+- Used on property or indexer **setters** assignable only during object initialization, in a constructor, or in a `with` expression for records.
+- Good for **immutable DTO-style** objects: set at creation, not modified later.
+
+### 10. `sealed`
+
+- **On a class:** no other class may inherit (`public sealed class AppSettings { }`).
+- **On a method with `override`:** `public sealed override void M() { }` — derived classes cannot override `M` again (final override).
+- **Not** the same as `static`: `sealed` blocks subclassing; `static` is type-level, no instance.
+- Common pairs: `virtual` → `override` → `sealed override`; or `sealed class` when the type must not be extended.
+
+*Practice:* `KeyWords.RunSealedDemo()` — `SealedOverrideChild`, `SealedClass` with `init` property.
+
+### 11. `Span<T>` (related feature, not a keyword)
+
+- **Ref struct** that does not create new memory; points to existing contiguous memory.
+- **`Span<T>`:** mutable view; **`ReadOnlySpan<T>`:** read-only view (strings, read-only data).
+- **`.Slice(start, length)`** — another view without allocation or copying.
+- Index `[]` reads/writes through the view; modifying `Span<T>` can modify the original array/memory.
+- **Stack-only:** cannot be boxed, stored in class fields, or used across **async** / **`yield`** boundaries.
+
+*See also:* **`Span<T>` / `ReadOnlySpan<T>`** in Topics (Advanced).
+
+### 12. Windows Forms (WinForms)
+
+- Free and open-source **GUI** class library included as part of the **.NET** framework.
+- Introduced by Microsoft as the original **drag-and-drop** framework to build rich, **native desktop** applications for **Windows**.
+
+### 13. `extern`
+
+- **Modifier:** declares a method implemented **outside** your C# source code (no method body in C#).
+- Tells the compiler: trust this **signature**; implementation is supplied at **runtime** (often a native Windows DLL via **P/Invoke**).
+- Common pattern:
+
+```csharp
+[DllImport("advapi32.dll", SetLastError = true)]
+public static extern bool RevertToSelf();
+```
+
+*Practice:* `KeyWords.SecurityUtilities` — `extern` + `DllImport` on `advapi32.dll` (Windows only; do not call without understanding impersonation context).
+
+### 14. `dynamic`
+
+- Keyword introduced in **C# 4.0**: tells the compiler to **bypass compile-time type checking**.
+- Calls, properties, and operations on a `dynamic` variable are resolved **entirely at runtime** (DLR), not at build time.
+- **Use when:** COM interop, some JSON/scripting scenarios, late-bound APIs where the compile-time type is unknown.
+- **Trade-off:** typos and missing members surface at runtime (`RuntimeBinderException`), not as compile errors; limited IntelliSense.
+- **`dynamic` vs `var`:** `var` is still **statically typed** at compile time; `dynamic` defers typing to runtime.
+- **`dynamic` vs `object`:** `object` requires explicit casts; `dynamic` allows direct member access when the runtime type supports it.
+
+*Practice:* `KeyWords.RunDynamicDemo()`
+
+*Code reference:* `ConsoleApp1\C# Practise\C#Basics\KeyWords.cs`
+
+------------------------------------------------------------------------------------------------------------------------
+
+## Expression-bodied members
+
+*Quick revision — C# 6+ `=>` syntax for concise class members (`ExpressionBodiedTheory.cs`)*
+
+### Definition
+
+Introduced in **C# 6** (expanded in later versions). Expression-bodied members replace a traditional `{ ... }` block that contains **only one expression** with the fat-arrow operator (`=>`).
+
+- **Syntax:** `member_signature => expression;`
+- **Rule:** Use only when the body is a **single** statement or expression.
+- **Return:** For value-returning members (methods, property getters), **`return` is implicit** — do not write it.
+
+### Supported member categories
+
+- Methods (value-returning or `void`)
+- Read-only properties
+- Property accessors (`get` / `set` blocks)
+- Constructors and destructors
+- Indexers
+
+### Examples (`UserProfile`)
+
+```csharp
+// Constructor
+public UserProfile(string firstName, string lastName) =>
+    (_firstName, _lastName) = (firstName, lastName);
+
+// Read-only property
+public string FullName => $"{_firstName} {_lastName}";
+
+// Accessors with validation
+public int Age
+{
+    get => _age;
+    set => _age = value > 0 ? value : throw new ArgumentException("Age must be positive.");
+}
+
+// Value-returning method
+public string GetGreeting() => $"Hello, my name is {FullName}!";
+
+// Void method
+public void LogToConsole() => Console.WriteLine($"Log Triggered for: {FullName}");
+```
+
+### Architectural benefit
+
+Reduces boilerplate in small utility types, DTOs, and domain entities **without** a runtime performance penalty — the compiler emits the same kind of IL as a normal member body.
+
+### Expression-bodied members vs lambda expressions
+
+| | **Expression-bodied member** | **Lambda expression** |
+|---|------------------------------|------------------------|
+| **Purpose** | Shorthand for a **named** class member | **Anonymous** function passed as data |
+| **Left of `=>`** | Member name + signature | Parameter list |
+| **Lifetime** | Permanent part of the type | Often stored in `Func<>` / `Action<>` or passed to a method |
+| **Closures** | No — normal instance/static member | Yes — can capture outer locals |
+
+**Mental model:**
+
+- Expression-bodied member = *how you define a permanent class member concisely.*
+- Lambda expression = *inline code passed on-the-fly to a delegate or API.*
+
+```csharp
+// Expression-bodied member (named, belongs to the class)
+public int MultiplyByTwo(int number) => number * 2;
+
+// Lambda (anonymous, assigned to Func<>)
+Func<int, int> lambdaProcessor = (x) => x * 2;
+```
+
+*Practice:* `ExpressionBodiedTheory.RunDemo()` — `UserProfile` samples + `MemberVsLambdaDemo.RunPipeline()`.  
+*Related:* **Lambdas** (`LambdaTheory.cs`), **Delegates**.
+
+*Code reference:* `ConsoleApp1\C# Practise\Advanced\ExpressionBodiedTheory.cs`
+
+------------------------------------------------------------------------------------------------------------------------
+
+## Data boxing and unboxing
+
+*Quick revision — value type ↔ reference type conversions (`BoxingTheory.cs`)*
+
+### 1. Boxing (value type → reference type)
+
+- **Allocation:** A new object wrapper is allocated on the managed **heap**.
+- **Copying:** The value (often in a stack frame or register) is **copied** into that heap object.
+- **Conversion:** Happens **implicitly** — no cast required (e.g. assign `int` to `object`).
+
+```csharp
+int stackValue = 150;
+object boxedObject = stackValue;  // boxing
+```
+
+### 2. Unboxing (reference type → value type)
+
+- **Verification:** The CLR checks the boxed object’s **exact** underlying type.
+- **Copying:** The value is copied from the heap object into a value-type variable.
+- **Conversion:** Requires an **explicit cast**. Wrong type → `InvalidCastException` (not numeric truncation).
+
+```csharp
+int unboxedValue = (int)boxedObject;  // unboxing
+
+double d = 99.99;
+object boxed = d;
+int bad = (int)boxed;  // InvalidCastException — must unbox as double, then cast if needed
+```
+
+### 3. Performance impact
+
+- Boxing causes **heap allocation** → more work for the **GC**.
+- Thousands of boxing operations in loops (e.g. legacy non-generic collections) add noticeable CPU overhead.
+- **Invisible boxing:** concatenating value types with `+` on `object`-based APIs can box (e.g. `"Age: " + age`).
+- **Prefer:** `List<T>` over `ArrayList`, generics over `object`, interpolated strings / `ToString()` instead of boxing through `object`.
+
+```csharp
+int age = 26;
+Console.WriteLine("User Age: " + age);           // may box
+Console.WriteLine($"User Age: {age.ToString()}"); // avoids boxing via object
+```
+
+*Practice:* `BoxingTheory.RunDemo()` — pipeline, failed unbox, performance examples.  
+*Related:* **Value types and reference types**, **Generics**, **Structs** (boxing section).
+
+*Code reference:* `ConsoleApp1\C# Practise\Advanced\BoxingTheory.cs`
+
+------------------------------------------------------------------------------------------------------------------------
+
+## LINQ (Language Integrated Query)
+
+*Quick revision — query in-memory sequences with `System.Linq` (`LinqTheory.cs`)*
+
+### Definition
+
+**LINQ** lets you **filter, sort, group, and project** data using a consistent syntax over **`IEnumerable<T>`** (in memory) or **`IQueryable<T>`** (remote providers such as EF Core). It lives in **`System.Linq`** as **extension methods**; predicates and projections are usually **lambdas**.
+
+### Two syntax styles
+
+| Style | Example |
+|-------|---------|
+| **Method** | `players.Where(p => p.Team == "Red").Select(p => p.Name)` |
+| **Query** | `from p in players where p.Team == "Red" select p.Name` |
+
+Both compile to similar operator chains; use whichever reads clearer for the team.
+
+### Deferred vs immediate execution
+
+| Kind | Examples | When it runs |
+|------|----------|--------------|
+| **Deferred** | `Where`, `Select`, `OrderBy`, `GroupBy` | When the result is **enumerated** (`foreach`, `ToList`, etc.) |
+| **Immediate** | `ToList`, `ToArray`, `Count()`, `Sum()`, `First()`, `Max()` | **Right away**; often allocates or fully consumes the sequence |
+
+- Enumerating the **same deferred chain twice** runs the pipeline **twice** — materialize with **`ToList()`** if you need multiple passes.
+- **`IQueryable<T>`** uses **expression trees** so a provider can translate the query (e.g. to SQL); **`IEnumerable<T>`** LINQ runs **in-process** on your objects.
+
+### Operators by category (`LinqTheory` demos)
+
+| # | Category | Main methods | Demo |
+|---|----------|--------------|------|
+| 1 | **Filtering** | `Where` | `Filtering_Demo` |
+| 2 | **Projection** | `Select` | `Projection_Demo` |
+| 3 | **Sorting** | `OrderBy`, `OrderByDescending`, `ThenBy` | `Sorting_Demo` |
+| 4 | **Grouping** | `GroupBy` | `Grouping_Demo` |
+| 5 | **Aggregation** | `Sum`, `Count`, `Average`, `Min`, `Max` | `Aggregation_Demo` |
+| 6 | **Quantifiers** | `Any`, `All`, `Contains` | `Quantifier_Demo` |
+| 7 | **Element** | `First`, `FirstOrDefault`, `Last`, `Single` | `Element_Demo` |
+| 8 | **Partitioning** | `Take`, `Skip` | `Partitioning_Demo` |
+| 9 | **Set** | `Distinct`, `Union`, `Intersect`, `Except` | `SetOperations_Demo` |
+| 10 | **Join** | `Join` (inner join, SQL-like) | `Join_Demo` |
+
+### Example snippets
+
+```csharp
+// Filtering
+numbers.Where(n => n % 2 == 0);
+
+// Projection
+names.Select(n => n.Length);
+
+// Join
+students.Join(departments, s => s.DepartmentId, d => d.Id, (s, d) => new { s.Name, d.Department });
+```
+
+### Performance (interview)
+
+- LINQ often allocates **delegates** and **iterators** — fine for most app code; profile hot paths.
+- Prefer a **`for`** loop on **`List<T>`** when micro-optimization matters.
+- Avoid **multiple enumerations** of an expensive deferred chain without caching.
+
+*Practice:* `LinqTheory.RunAllDemos()` or `LinqTheory.RunDemo()` — all 10 sections above.  
+*Related:* **Lambdas**, **Delegates**, **IEnumerable**, **Collections** (LINQ section in `Collections.cs`).
+
+*Code reference:* `ConsoleApp1\C# Practise\Advanced\LinqTheory.cs`
+
+------------------------------------------------------------------------------------------------------------------------
 
 ## Optional parameters
 

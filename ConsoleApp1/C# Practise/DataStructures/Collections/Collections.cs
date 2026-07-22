@@ -1,14 +1,664 @@
-using Microsoft.VisualBasic;
+using ConsoleApp1.C__Practise.Entry;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
+using System.Xml.Linq;
+using static ConsoleApp1.C__Practise.OOPs_Concepts.TypeCastingOopTheory;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ConsoleApp1.CSharpPractise.DataStructures.Collections
 {
     internal class Collections
     {
+
+        #region C# COLLECTIONS — COMPLETE OVERVIEW NOTES
+        /*
+                     C# COLLECTIONS HIERARCHY
+                     (Top -> Bottom Interface Flow + Major Families)
+
+        TYPES OF COLLECTIONS IN C#
+        ─────────────────────────
+        1. Generic collections — List<T>, Dictionary<K,V>, HashSet<T>, Queue<T>, Stack<T>.
+        2. Non-generic / legacy collections — ArrayList, Hashtable, Queue, Stack, BitArray.
+        3. Thread-safe / concurrent collections — ConcurrentDictionary<K,V>, ConcurrentQueue<T>,
+           ConcurrentStack<T>, ConcurrentBag<T>, BlockingCollection<T>.
+        4. Immutable collections — ImmutableList<T>, ImmutableDictionary<K,V>,
+           ImmutableHashSet<T>, ImmutableQueue<T>, ImmutableStack<T>.
+        5. Frozen collections — FrozenDictionary<K,V>, FrozenSet<T> for build-once/read-many lookup.
+        6. Read-only wrappers and interfaces — IReadOnlyList<T>, IReadOnlyDictionary<K,V>,
+           ReadOnlyCollection<T>, ReadOnlyDictionary<K,V>.
+        7. Object model / binding collections — Collection<T>, ObservableCollection<T>,
+           KeyedCollection<TKey,TItem>, BindingList<T>.
+        8. Specialized collections — StringCollection, StringDictionary, NameValueCollection,
+           OrderedDictionary, HybridDictionary, ListDictionary.
+        9. Sorted collections — SortedList<K,V>, SortedDictionary<K,V>, SortedSet<T>.
+        10. Collection-adjacent sequence/memory types — T[], ArraySegment<T>, Span<T>,
+            ReadOnlySpan<T>, Memory<T>, ReadOnlyMemory<T>.
+
+        =============================================================================
+        ONE FLOWCHART — ALL COLLECTIONS (TOP → BOTTOM, EVERY NODE CONNECTED)
+        =============================================================================
+        Core Collection Interfaces:
+
+                             IEnumerable
+                                  |
+                             IEnumerable<T>
+                                  |
+            ┌─────────────────────┴─────────────────────┐
+            |                                           |
+  IReadOnlyCollection<T>                          ICollection<T>
+            |                                           |
+  ┌─────────┴────────┐                     ┌────────────┴────────────┐
+  |                  |                     |                         |
+IReadOnlyList<T>  IReadOnlySet<T>       IList<T>                  ISet<T>
+  |                  |                     |                         |
+List<T>           HashSet<T>            List<T>                   HashSet<T>
+
+
+Dictionary Interfaces:
+
+                 IEnumerable<KeyValuePair<TKey,TValue>>
+                                   |
+            ┌──────────────────────┴──────────────────────┐
+            |                                             |
+ICollection<KeyValuePair<TKey,TValue>>    IReadOnlyCollection<KeyValuePair<TKey,TValue>>
+            |                                             |
+            |                                             |
+IDictionary<TKey,TValue>                  IReadOnlyDictionary<TKey,TValue>
+            |
+Dictionary<TKey,TValue>
+
+
+Concurrent Interfaces:
+
+                             IEnumerable<T>
+                                  |
+                   IProducerConsumerCollection<T>
+                                  |
+            ┌─────────────────────┼─────────────────────┐
+            |                     |                     |
+    ConcurrentBag<T>      ConcurrentQueue<T>    ConcurrentStack<T>
+
+
+Iterator Interfaces (Standalone Hierarchy):
+
+        IEnumerator
+             |
+        IEnumerator<T> ─── (Inherits from) ─── IDisposable
+
+        │ ▼ = implements / derives from parent above
+        Concrete types sit under PRIMARY parent; many also implement read-only twins.
+
+        FOREACH PAIR (parallel roots — collection vs cursor)
+        ────────────────────────────────────────────────────
+        IEnumerable / IEnumerable<T>  = "can be iterated"  (the collection)
+        IEnumerator / IEnumerator<T>  = "the cursor"       (NOT a collection parent)
+
+                    ┌─────────────────┐   GetEnumerator()   ┌─────────────────┐
+                    │   IEnumerable   │ ───────────────────►│   IEnumerator   │
+                    │  (collection)   │                     │ Current/MoveNext│
+                    └────────┬────────┘                     │ /Reset          │
+                             │                              └────────┬────────┘
+                             │ inherits                              │ inherits
+                             ▼                                       ▼
+                    ┌─────────────────┐   GetEnumerator()   ┌─────────────────┐
+                    │ IEnumerable<T>  │ ───────────────────►│ IEnumerator<T>  │
+                    │  + LINQ source  │                     │ T Current       │
+                    └────────┬────────┘                     │ + IDisposable   │
+                             │                              └─────────────────┘
+                             │
+        foreach expands to: GetEnumerator() → while (MoveNext()) use Current → Dispose()
+
+                              ┌─────────────────┐
+                              │   IEnumerable   │  ROOT of collection tree
+                              └────────┬────────┘
+                                       │
+              ┌────────────────────────┼────────────────────────┐
+              ▼                        ▼                        ▼
+     ┌────────────────┐       ┌────────────────┐       ┌──────────────────────────────┐
+     │ IEnumerable<T> │       │  ICollection   │       │ IProducerConsumerCollection  │
+     │ generic + LINQ │       │  (non-generic) │       │ <T>  (also : IEnumerable<T>  │
+     └───────┬────────┘       └───────┬────────┘       │  + ICollection non-generic)  │
+             │                        │                └──────────────┬───────────────┘
+             │                        │                               │
+   ┌─────────┴──────────┐             │              ┌────────────────┼────────────────┐
+   ▼                    ▼             │              ▼                ▼                ▼
+┌──────────────┐ ┌────────────────────┐│    ┌────────────────┐┌────────────────┐┌────────────────┐
+│ICollection<T>│ │IReadOnlyCollection ││    │ConcurrentQueue ││ConcurrentStack ││ConcurrentBag  │
+│ mutate+Count │ │       <T>          ││    │     <T> FIFO   ││     <T> LIFO   ││ <T> unordered  │
+└──────┬───────┘ └─────────┬──────────┘│    └───────┬────────┘└────────────────┘└────────────────┘
+       │                   │           │            │ wraps default ConcurrentQueue
+       │                   │           │            ▼
+       │                   │           │    ┌──────────────────────────┐
+       │                   │           │    │ BlockingCollection<T>    │
+       │                   │           │    └──────────────────────────┘
+       │                   │           │
+       │                   │           │   NON-GENERIC ICollection branch
+       │                   │           ├───────────────┬────────────────┐
+       │                   │           ▼               ▼                ▼
+       │                   │    ┌──────────┐   ┌────────────┐   ┌────────────────┐
+       │                   │    │  IList   │   │IDictionary │   │ Queue (legacy) │
+       │                   │    └────┬─────┘   └─────┬──────┘   │ Stack (legacy) │
+       │                   │         │               │          │ BitArray       │
+       │                   │         ▼               ▼          │ ReadOnlyColl.  │
+       │                   │  ┌────────────┐  ┌──────────────┐  │     Base       │
+       │                   │  │ ArrayList  │  │ Hashtable    │  └────────────────┘
+       │                   │  │Collection  │  │ SortedList   │
+       │                   │  │    Base    │  │DictionaryBase│
+       │                   │  │StringColl. │  │OrderedDict.  │
+       │                   │  └────────────┘  │ListDictionary│
+       │                   │                  │HybridDict.   │
+       │                   │                  │StringDict.   │
+       │                   │                  │NameObjectColl│──► NameValueCollection
+       │                   │                  │    Base      │
+       │                   │                  └──────────────┘
+       │                   │
+       │      ┌────────────┼────────────┬──────────────────┐
+       │      ▼            ▼            ▼                  ▼
+       │ ┌──────────┐┌──────────┐┌──────────────┐┌─────────────────────────────┐
+       │ │IReadOnly ││IReadOnly ││IReadOnlyDict ││ Queue<T>  FIFO              │
+       │ │ List<T>  ││ Set<T>   ││   <K,V>      ││ Stack<T>  LIFO              │
+       │ └──────────┘└──────────┘└──────────────┘│ PriorityQueue<T,P>  heap    │
+       │  (List/T[]/… also) (HashSet/…) (Dict/…) │ ImmutableQueue<T>           │
+       │                                         │ ImmutableStack<T>           │
+       │                                         └─────────────────────────────┘
+       │
+ ┌─────┴──────────┬──────────────┬──────────────────┐
+ ▼                ▼              ▼                  ▼
+┌──────────┐ ┌──────────┐ ┌────────────────┐ ┌────────────────┐
+│ IList<T> │ │ ISet<T>  │ │IDictionary<K,V>│ │ LinkedList<T>  │
+└────┬─────┘ └────┬─────┘ └───────┬────────┘ │ (+ LinkedList  │
+     │            │               │          │   Node<T>)     │
+     ▼            ▼               ▼          └────────────────┘
+
+┌─────────────────────────┐ ┌──────────────────┐ ┌────────────────────────────┐
+│ List<T>                 │ │ HashSet<T>       │ │ Dictionary<K,V>            │
+│ T[]                     │ │ SortedSet<T>     │ │ SortedDictionary<K,V>      │
+│ ArraySegment<T>         │ │ ImmutableHashSet │ │ SortedList<K,V>            │
+│ Collection<T> ──┐       │ │ ImmutableSorted  │ │ ConcurrentDictionary<K,V>  │
+│   ├─ObservableColl<T>   │ │   Set<T>         │ │ ReadOnlyDictionary<K,V>    │
+│   └─KeyedCollection<K,T>│ │ FrozenSet<T>     │ │ ImmutableDictionary<K,V>   │
+│ BindingList<T>          │ └──────────────────┘ │ ImmutableSortedDictionary  │
+│ ReadOnlyCollection<T>   │                      │ FrozenDictionary<K,V>      │
+│ ImmutableList<T>        │                      └────────────────────────────┘
+│ ImmutableArray<T>       │
+└─────────────────────────┘
+
+  PARENT CHEATSHEET (climb arrows to IEnumerable)
+  ───────────────────────────────────────────────
+  Queue<T>/Stack<T>       → IReadOnlyCollection<T> → IEnumerable<T> → IEnumerable
+                            (+ ICollection non-generic; NOT ICollection<T>)
+  LinkedList<T>           → ICollection<T> → IEnumerable<T> → IEnumerable
+  List<T> / T[]           → IList<T> → ICollection<T> → IEnumerable<T> → IEnumerable
+  HashSet<T>              → ISet<T> → ICollection<T> → IEnumerable<T> → IEnumerable
+  Dictionary<K,V>         → IDictionary<K,V> → ICollection<KVP> → IEnumerable → …
+  ConcurrentQueue<T>      → IProducerConsumerCollection<T> → IEnumerable<T> → IEnumerable
+  ConcurrentDictionary    → IDictionary<K,V> → … (same map branch)
+  ObservableCollection<T> → Collection<T> → IList<T> → …
+  Queue/Stack (legacy)    → ICollection → IEnumerable
+  Hashtable               → IDictionary → ICollection → IEnumerable
+
+  Outside tree: Channel<T>, ArrayPool<T>, Span<T>/Memory<T>; prefer Concurrent*
+  over ArrayList.Synchronized / Hashtable.Synchronized.
+
+        =============================================================================
+        COLLECTION-ADJACENT SEQUENCE TYPES (outside main interface tree)
+        =============================================================================
+
+        T[] — in tree above under IList<T> / IReadOnlyList<T>.
+        ArraySegment<T> — view over array; list-like in modern .NET.
+        Span<T> / ReadOnlySpan<T> — stack-only views; NOT IEnumerable<T>.
+        Memory<T> / ReadOnlyMemory<T> — heap-safe views for async/pipelines.
+        Enumerable / Lookup / Grouping — LINQ result shapes.
+
+        Sorted     — SortedDictionary, SortedSet, SortedList (+ IComparer<T>).
+        Concurrent — ConcurrentDictionary, ConcurrentQueue/Stack/Bag.
+        Immutable  — ImmutableList/Dictionary/HashSet/Queue/Stack (+ Builder).
+        Frozen     — FrozenDictionary / FrozenSet (.NET 8+, build-once read-many).
+        Priority   — PriorityQueue<T,P> (.NET 6+); no Concurrent/Immutable twin in BCL.
+
+        -----------------------------------------------------------------------------
+           * 9. CHOOSING A TYPE (DECISION CHEATSHEET)
+           * -----------------------------------------------------------------------------
+           *
+           * Ordered list, index access, unknown final size           → List<T>
+           * Many inserts/removes with stable node references         → LinkedList<T>
+           * Associative map, fastest key lookup, unsorted OK         → Dictionary<,>
+           * Map sorted by key, frequent add/remove, large n          → SortedDictionary<,>
+           * Map sorted by key, small n, memory tight, rank index     → SortedList<,>
+           * Unique membership, no ordering requirement               → HashSet<T>
+           * Unique elements, sorted iteration, min/max/ranges        → SortedSet<T>
+           * Fair first-in-first-out processing                       → Queue<T> / ConcurrentQueue<T>
+           * Undo / depth-first / nested structure (last wins)        → Stack<T> / ConcurrentStack<T>
+           * Schedule by priority (Dijkstra, task queues)             → PriorityQueue<,>
+           * Many producers/consumers, shared map                     → ConcurrentDictionary<,>
+           * Ordered items + UI must react to changes                 → ObservableCollection<T>
+           * Expose sequence without exposing Add                     → ReadOnlyCollection<T> or IReadOnlyList<T>
+           * Keys derived from items, list order + key lookup         → KeyedCollection<TKey,TItem>
+           * Build once, millions of reads, known key set             → FrozenDictionary / FrozenSet (.NET 8+)
+           *
+           * -----------------------------------------------------------------------------
+           * 10. COMPLEXITY SUMMARY (BIG-O; AVERAGE CASE FOR HASH TYPES)
+           * -----------------------------------------------------------------------------
+           *
+           * Type                    Index   Add/end   Add/mid   Contains   Remove
+           * ----------------------  ------  --------  --------  ---------  -------------
+           * List<T>                 O(1)    O(1)*     O(n)      O(n)       O(n)
+           * LinkedList<T>           —       O(1)      O(1)+     O(n)       O(1)+ / O(n)*
+           * Dictionary<,>           —       O(1)~     —         O(1)~ key  O(1)~ key
+           * SortedDictionary<,>    —       O(log n)  —         O(log n)   O(log n)
+           * SortedList<,>          O(1)    O(n)      O(n)      O(log n)k  O(n)
+           * HashSet<T>             —       O(1)~     —         O(1)~      O(1)~
+           * SortedSet<T>           —       O(log n)  —         O(log n)   O(log n)
+           * Queue<T> / Stack<T>    —       O(1)*     —         O(n)       O(1) at end
+           * PriorityQueue<,>      —       O(log n)  —         O(n) scan  O(log n)
+           *
+           * Legend: * amortized (array resize rare but O(n) when it happens).
+           *         k ContainsKey / IndexOfKey on SortedList is O(log n).
+           *         + LinkedList: O(1) with known node; find node by value O(n).
+           *         ~ hash types: O(n) worst case if all keys collide (bad hash / attack);
+           *           good GetHashCode + Equals keeps average O(1).
+
+           * =============================================================================
+           * C# / .NET COLLECTIONS — FULL REFERENCE (READ ME FIRST)
+           * =============================================================================
+           *
+           * HOW TO USE THIS REGION
+           * -----------------------------------------------------------------------------
+           * Skim TAKEAWAY, then SECTIONS INDEX, then NAMESPACES. Use numbered sections as a
+           * textbook: interfaces (contracts), then concrete types (behavior + complexity), then
+           * threading, LINQ, equality, capacity. Deep per-type demos and interview-style notes live
+           * in GenericCollections; thread-safe demos in ConcurrentCollections.
+           *
+           * TAKEAWAY — QUICK REVISION
+           * -----------------------------------------------------------------------------
+           * • Prefer System.Collections.Generic concrete types for new code:
+           *   List<T>, LinkedList<T>, Dictionary<TKey,TValue>, SortedDictionary<TKey,TValue>,
+           *   SortedList<TKey,TValue>, HashSet<T>, SortedSet<T>, Queue<T>, Stack<T>,
+           *   PriorityQueue<TElement,TPriority> (.NET 6+).
+           * • Avoid non-generic ArrayList, Hashtable, Queue, Stack, SortedList (non-generic):
+           *   elements are object (reference types OK; value types box on insert, unbox on
+           *   read), no compile-time type checking, easy runtime InvalidCastException.
+           * • IEnumerable<T>: foreach + LINQ (extensions on IEnumerable<T>, not on the
+           *   interface itself). ICollection<T>: Count + Add, Remove, Clear, Contains, CopyTo.
+           *   IList<T>: adds int indexer, Insert, RemoveAt (random access by position).
+           * • Dictionary: O(1) average by key; SortedDictionary / SortedList: keys sorted;
+           *   HashSet / SortedSet: unique elements only (no separate value per key).
+           * • Queue FIFO; Stack LIFO; PriorityQueue: next item by best priority (default
+           *   min-heap on TPriority). None of these three expose an int indexer.
+           * • Never mutate a collection while enumerating it with foreach on that same
+           *   instance (InvalidOperationException: collection was modified).
+           * • Multiple threads writing List / Dictionary / HashSet without synchronization:
+           *   undefined behavior or corruption. Use Concurrent*, locks, or immutable copies.
+           * • IReadOnlyList<T> / IReadOnlyDictionary<,> / IReadOnlyCollection<T>: good API
+           *   return types; they do not make the underlying object immutable by magic.
+           * • Performance: EnsureCapacity / TrimExcess where available; LINQ often allocates
+           *   (ToList, OrderBy, GroupBy materialize new objects).
+           * • Hash-based types: IEqualityComparer<T> (Equals + GetHashCode contract).
+           *   Sorted types: IComparer<T> (consistent ordering; bad comparer breaks trees).
+           *
+           * SECTIONS INDEX (topics in this Collections overview)
+           * -----------------------------------------------------------------------------
+           * • HOW TO USE THIS REGION — reading order; links to GenericCollections /
+           *   ConcurrentCollections.
+           * • TAKEAWAY — QUICK REVISION — one-screen essentials (above).
+           * • NAMESPACES — WHERE THINGS LIVE — Generic, legacy Collections, Concurrent,
+           *   ObjectModel, Specialized, Immutable, Frozen, LINQ.
+           * • 1. WHY GENERICS — object/boxing vs List<T> / type safety.
+           * • 2. CORE INTERFACES — contracts, inheritance model, API design, full member
+           *   lists (IEnumerable through IReadOnlySet).
+           * • 3. ARRAYS, SPAN, MEMORY — T[], covariance, stackalloc, Span/Memory vs List<T>.
+           * • 4. List<T> AND LinkedList<T> — dynamic array vs doubly-linked list.
+           * • 5. Queue<T>, Stack<T>, PriorityQueue<TElement,TPriority> — FIFO/LIFO/heap.
+           * • 6. MAPS — Dictionary, SortedDictionary, SortedList (key -> value).
+           * • 7. SETS — HashSet<T>, SortedSet<T> (unique elements).
+           * • 8. OBJECTMODEL, SPECIALIZED, CONCURRENT, IMMUTABLE, FROZEN — Collection<T>,
+           *   ObservableCollection<T>, ReadOnlyCollection<T>, KeyedCollection<T>, BitArray,
+           *   Concurrent*, BlockingCollection<T>, Immutable*, Frozen*.
+           * • 9. CHOOSING A TYPE — decision cheatsheet (when to pick which type).
+           * • 10. COMPLEXITY SUMMARY — Big-O table + legend.
+           * • 11. ENUMERATION, foreach, AND SAFETY — versioning, Reset, struct enumerator.
+           * • 12. LINQ AND IEnumerable<T> — deferred vs immediate; IQueryable note.
+           * • 13. EQUALITY, ORDERING, AND KEYS — comparers, mutable-key hazard, records.
+           * • 14. CAPACITY, MEMORY, AND GC — EnsureCapacity, TrimExcess, rehash, LOH.
+           * • Outside this comment: GenericCollections (per-type demos + deep notes);
+           *   ConcurrentCollections (thread-safe demos).
+           *
+           * NAMESPACES — WHERE THINGS LIVE
+           * -----------------------------------------------------------------------------
+           * System.Collections.Generic — primary generic collections (List, Dictionary, …).
+           * System.Collections — legacy non-generic (IEnumerable, ArrayList, Hashtable, …).
+           * System.Collections.Concurrent — thread-safe bags, queues, stacks, dictionary.
+           * System.Collections.ObjectModel — Collection<T>, ObservableCollection<T>,
+           *   ReadOnlyCollection<T>, KeyedCollection<TKey,TItem> (base / binding / keys).
+           * System.Collections.Specialized — niche (StringCollection, ListDictionary, …).
+           * System.Collections.Immutable — immutable lists, maps, sets (NuGet / ref pack).
+           * System.Collections.Frozen — FrozenDictionary, FrozenSet (.NET 8+), build-once.
+           * System.Linq — extension methods over IEnumerable<T> (not part of collections).
+           *
+           * -----------------------------------------------------------------------------
+           * 1. WHY GENERICS (NOT object / NON-GENERIC COLLECTIONS)
+           * -----------------------------------------------------------------------------
+           *
+           * Non-generic collections store reference type object. Inserting int into
+           * ArrayList boxes the int (heap allocation). Reading back requires (int) cast or
+           * invalid cast at runtime if the wrong type was stored. Generics compile to
+           * type-specific code (reified generics in .NET): List<int> stores ints without
+           * boxing in the backing array; the compiler rejects list.Add("text").
+           *
+           * When non-generic is still seen: COM interop, very old libraries, Hashtable in
+           * some config-style APIs. For new application code, default to List<T>,
+           * Dictionary<TKey,TValue>, HashSet<T>, etc.
+           *
+           * -----------------------------------------------------------------------------
+           * 2. CORE INTERFACES (CONTRACTS YOUR CODE CAN DEPEND ON)
+           * -----------------------------------------------------------------------------
+           *
+           * Interfaces declare members only (no default instance methods until explicit
+           * interface patterns). Implementations (List<T>, Dictionary<,>, …) provide the
+           * real behavior. Extension methods (LINQ in System.Linq) are static methods whose
+           * first parameter is IEnumerable<T>; they are not members of IEnumerable<T>.
+           *
+           * Inheritance chain (mental model): IEnumerable<T> -> ICollection<T> -> IList<T>
+           * or ICollection<T> -> ISet<T>. Maps: IEnumerable<KeyValuePair<,>> and
+           * IDictionary<TKey,TValue> extend ICollection<KeyValuePair<TKey,TValue>>. Read-only
+           * interfaces sit beside these: IReadOnlyCollection<T>, IReadOnlyList<T>,
+           * IReadOnlyDictionary<,>, IReadOnlySet<T> — they do not inherit ICollection<T>.
+           *
+           * API design: accept IEnumerable<T> when you only need one pass (or streaming).
+           * Accept IReadOnlyList<T> when callers must support Count + indexer without
+           * mutation. Return IReadOnlyList<T> / IReadOnlyDictionary<,> from public APIs to
+           * discourage external mutation; internally you may still hold a List<T> or
+           * Dictionary<,> and cast or wrap.
+           *
+           * Member reference (BCL-declared only):
+           *
+           * --- IEnumerable (non-generic, System.Collections) ---
+           *   IEnumerator GetEnumerator();
+           * IEnumerator exposes: object Current { get; }, bool MoveNext(), void Reset()
+           *   (Reset is legacy; prefer foreach / new enumerator instances.)
+           *
+           * --- IEnumerable<T> (extends IEnumerable) ---
+           *   IEnumerator<T> GetEnumerator();
+           * IEnumerator<T> exposes: T Current { get; } (also IDisposable)
+           *
+           * --- ICollection (non-generic) ---
+           *   int Count { get; }
+           *   bool IsSynchronized { get; }   object SyncRoot { get; }
+           *   void CopyTo(Array array, int index);
+           *
+           * --- ICollection<T> (extends IEnumerable<T>) ---
+           *   int Count { get; }             bool IsReadOnly { get; }
+           *   void Add(T item);               void Clear();
+           *   bool Contains(T item);         void CopyTo(T[] array, int arrayIndex);
+           *   bool Remove(T item);
+           *
+           * --- IList (non-generic; extends ICollection, IEnumerable) ---
+           *   object this[int index] { get; set; }
+           *   bool IsFixedSize { get; }      bool IsReadOnly { get; }
+           *   int Add(object value);         void Clear();                 bool Contains(object value);
+           *   int IndexOf(object value);     void Insert(int index, object value);
+           *   void Remove(object value);     void RemoveAt(int index);
+           *
+           * --- IList<T> (extends ICollection<T>, IEnumerable<T>) ---
+           *   T this[int index] { get; set; }
+           *   int IndexOf(T item);           void Insert(int index, T item);
+           *   void RemoveAt(int index);
+           *   (Also inherits ICollection<T>: Add, Clear, Contains, CopyTo, Remove, Count…)
+           *
+           * --- ISet<T> (extends ICollection<T>, IEnumerable<T>) ---
+           *   bool Add(T item);   (returns false if duplicate — unlike ICollection<T>.Add)
+           *   void UnionWith(IEnumerable<T> other);           void IntersectWith(IEnumerable<T> other);
+           *   void ExceptWith(IEnumerable<T> other);          void SymmetricExceptWith(IEnumerable<T> other);
+           *   bool IsSubsetOf(IEnumerable<T> other);          bool IsSupersetOf(IEnumerable<T> other);
+           *   bool IsProperSubsetOf(IEnumerable<T> other);    bool IsProperSupersetOf(IEnumerable<T> other);
+           *   bool Overlaps(IEnumerable<T> other);             bool SetEquals(IEnumerable<T> other);
+           *
+           * --- IDictionary (non-generic; extends ICollection, IEnumerable) ---
+           *   object this[object key] { get; set; }     ICollection Keys { get; }   ICollection Values { get; }
+           *   bool IsFixedSize { get; }                 bool IsReadOnly { get; }
+           *   void Add(object key, object value);      void Clear();                bool Contains(object key);
+           *   IDictionaryEnumerator GetEnumerator();   void Remove(object key);
+           *
+           * --- IDictionary<TKey,TValue> (extends ICollection<KeyValuePair<,>>, IEnumerable<…>) ---
+           *   TValue this[TKey key] { get; set; }
+           *   ICollection<TKey> Keys { get; }           ICollection<TValue> Values { get; }
+           *   void Add(TKey key, TValue value);        bool ContainsKey(TKey key);
+           *   bool Remove(TKey key);                   bool TryGetValue(TKey key, out TValue value);
+           *   (Also ICollection<KeyValuePair<TKey,TValue>>: Add, Clear, Contains, CopyTo, Remove, Count…)
+           *
+           * --- IReadOnlyCollection<T> (extends IEnumerable<T>) ---
+           *   int Count { get; }
+           *
+           * --- IReadOnlyList<T> (extends IReadOnlyCollection<T>, IEnumerable<T>) ---
+           *   T this[int index] { get; }     (plus Count from IReadOnlyCollection<T>)
+           *
+           * --- IReadOnlyDictionary<TKey,TValue> (extends IReadOnlyCollection<KeyValuePair<,>>,
+           *     IEnumerable<KeyValuePair<TKey,TValue>>) ---
+           *   TValue this[TKey key] { get; }
+           *   IEnumerable<TKey> Keys { get; }         IEnumerable<TValue> Values { get; }
+           *   bool ContainsKey(TKey key);              bool TryGetValue(TKey key, out TValue value);
+           *   (int Count from IReadOnlyCollection<KeyValuePair<TKey,TValue>>)
+           *
+           * --- IReadOnlySet<T> (.NET 5+; extends IReadOnlyCollection<T>, IEnumerable<T>) ---
+           *   bool Contains(T item);
+           *   bool IsSubsetOf(IEnumerable<T> other);              bool IsSupersetOf(IEnumerable<T> other);
+           *   bool IsProperSubsetOf(IEnumerable<T> other);      bool IsProperSupersetOf(IEnumerable<T> other);
+           *   bool Overlaps(IEnumerable<T> other);                bool SetEquals(IEnumerable<T> other);
+           *   (plus Count from IReadOnlyCollection<T>)
+           *
+           * -----------------------------------------------------------------------------
+           * 3. ARRAYS, SPAN, MEMORY (NOT List<T>, BUT COLLECTION-ADJACENT)
+           * -----------------------------------------------------------------------------
+           *
+           * T[] — fixed size after allocation; contiguous memory; best cache locality;
+           *   this[i] in O(1). Implements IList<T> (fixed size; some mutating IList APIs
+           *   throw NotSupportedException on arrays — prefer array syntax). Covariant for
+           *   reference types only (string[] assignable to object[], unsound if you write
+           *   non-string into object[] slot — runtime ArrayTypeMismatchException).
+           *
+           * Choose array when: length known at creation and rarely changes; interop; stack
+           * performance. Choose List<T> when: grow/shrink, AddRange, RemoveAll, Sort, …
+           *
+           * stackalloc T[n] — allocates on the stack (value types); wrapped as Span<T>;
+           *   scoped lifetime (cannot return to heap as Span unless copied).
+           *
+           * Span<T> / ReadOnlySpan<T> — ref struct over contiguous memory (array slice,
+           *   stackalloc, string chars); no heap allocation for the view; cannot be fields
+           *   on async/iterator classes without care. Memory<T> / ReadOnlyMemory<T> for
+           *   async pipelines and non-contiguous-safe holding (Pinning may be required).
+           *
+           * -----------------------------------------------------------------------------
+           * 4. List<T> AND LinkedList<T>
+           * -----------------------------------------------------------------------------
+           *
+           * List<T> — backing store is T[]; Count vs Capacity; Add at end amortized O(1);
+           *   insert/remove at index shifts elements O(n); Sort, BinarySearch, RemoveAll,
+           *   Find, FindIndex, TrueForAll, ForEach, ConvertAll, GetRange, InsertRange,
+           *   RemoveRange, TrimExcess, EnsureCapacity (modern .NET). Default for ordered
+           *   sequences with index access. Not thread-safe.
+           *
+           * LinkedList<T> — doubly-linked LinkedListNode<T> chain; AddFirst, AddLast,
+           *   AddBefore, AddAfter with O(1) when you already have the node; Find / FindLast
+           *   by value O(n); no this[int]; no Sort on the type (copy to List if needed).
+           *   Good: LRU, frequent insert/remove between known nodes. Bad: cache misses vs
+           *   array; arbitrary access by logical index requires walking O(n).
+           *
+           * -----------------------------------------------------------------------------
+           * 5. Queue<T>, Stack<T>, PriorityQueue<TElement,TPriority>
+           * -----------------------------------------------------------------------------
+           *
+           * Queue<T> — FIFO: Enqueue (tail), Dequeue / TryDequeue (head), Peek / TryPeek.
+           *   foreach walks head-to-tail without dequeuing. Contains is O(n). Internal
+           *   ring buffer; EnsureCapacity / TrimExcess on supported runtimes. Wrong tool if
+           *   you need priority: use PriorityQueue. For multi-threaded FIFO use
+           *   ConcurrentQueue<T>.
+           *
+           * Stack<T> — LIFO: Push, Pop / TryPop, Peek / TryPeek. foreach iterates top-down
+           *   (newest first). ToArray returns top at index 0. ConcurrentStack<T> for
+           *   parallel LIFO. Do not use List.RemoveAt(0) as a queue (O(n) per dequeue).
+           *
+           * PriorityQueue<TElement,TPriority> (.NET 6+) — binary min-heap by default
+           *   (Comparer<TPriority>.Default). Enqueue, Dequeue / TryDequeue, Peek / TryPeek,
+           *   EnqueueDequeue (bounded top-K pattern), EnqueueRange, UnorderedItems (heap
+           *   layout, not dequeue order). Equal priorities: relative order unspecified;
+           *   encode tie-breaker in TPriority (e.g. tuple (priority, sequence)). Max-heap:
+           *   pass Comparer<TPriority>.Create((a,b) => b.CompareTo(a)).
+           *
+           * -----------------------------------------------------------------------------
+           * 6. MAPS (KEY -> VALUE)
+           * -----------------------------------------------------------------------------
+           *
+           * Dictionary<TKey,TValue> — hash buckets + entries; unique keys. Add throws if
+           *   duplicate key; TryAdd returns false; indexer get throws if missing (prefer
+           *   TryGetValue); indexer set adds or overwrites. ContainsKey O(1) average;
+           *   ContainsValue scans all values O(n). Remove(key), Remove(key, out value).
+           *   Enumeration: insertion order on current .NET for string-like usage — still
+           *   treat as unordered for algorithm correctness. Custom IEqualityComparer<TKey>
+           *   for case-insensitive string keys, structural equality, etc. Not thread-safe.
+           *
+           * SortedDictionary<TKey,TValue> — red-black tree sorted by key (IComparer<TKey>).
+           *   Add / Remove / ContainsKey O(log n). Keys/Values enumerate in sorted order.
+           *   Higher per-entry memory than SortedList; better when n grows and keys are
+           *   inserted/deleted in random order. No O(1) index into "k-th smallest key"
+           *   without walking (unlike SortedList's Keys[i]).
+           *
+           * SortedList<TKey,TValue> — two arrays (keys sorted, values aligned). IndexOfKey
+           *   binary search O(log n); Add may shift O(n); good compact memory for small or
+           *   read-heavy maps; Keys and Values implement IList<T> for rank-based access.
+           *
+           * -----------------------------------------------------------------------------
+           * 7. SETS (UNIQUE ELEMENTS; NO VALUE BESIDE THE ELEMENT)
+           * -----------------------------------------------------------------------------
+           *
+           * HashSet<T> — hash table of unique T; Add returns bool (false if duplicate).
+           *   UnionWith / IntersectWith / ExceptWith / SymmetricExceptWith mutate this set.
+           *   IsSubsetOf, IsSupersetOf, Overlaps, SetEquals for comparisons. TryGetValue
+           *   returns canonical equal instance (useful with custom equality). Enumeration
+           *   order unspecified. RemoveWhere(predicate) O(n).
+           *
+           * SortedSet<T> — red-black tree of unique T sorted by IComparer<T>. Min, Max,
+           *   GetViewBetween(lower, upper) live sub-range. Same set algebra as HashSet.
+           *   CopyTo writes in sorted order. Prefer HashSet when order irrelevant and you
+           *   need raw speed; SortedSet when you need sorted enumeration or range queries.
+           *
+           * -----------------------------------------------------------------------------
+           * 8. OBJECTMODEL, SPECIALIZED, CONCURRENT, IMMUTABLE, FROZEN
+           * -----------------------------------------------------------------------------
+           *
+           * System.Collections.ObjectModel
+           *   Collection<T> — base class wrapping IList<T>; override InsertItem, RemoveItem,
+           *     ClearItems, SetItem to hook mutations (used for validated collections).
+           *   ObservableCollection<T> — Collection<T> + INotifyCollectionChanged /
+           *     INotifyPropertyChanged for UI binding (WPF, MAUI, WinUI).
+           *   ReadOnlyCollection<T> — read-only wrapper over IList<T>; stops external
+           *     writes via wrapper; underlying list can still be mutated if referenced.
+           *   KeyedCollection<TKey,TItem> — abstract list-like collection keyed by TKey;
+           *     override GetKeyForItem; O(1) key lookup dictionary + list order.
+           *
+           * BitArray (System.Collections) — dense vector of bool; bitwise And/Or/Xor/Not;
+           *   different from bool[] for space and bit-twiddling APIs.
+           *
+           * System.Collections.Concurrent — lock-free or fine-grained structures:
+           *   ConcurrentQueue<T>, ConcurrentStack<T>, ConcurrentBag<T> (unordered take),
+           *   ConcurrentDictionary<TKey,TValue> (TryAdd, GetOrAdd, AddOrUpdate, TryUpdate).
+           *   Count can be approximate under contention. See ConcurrentCollections demos.
+           *
+           * BlockingCollection<T> — optional bounded buffer; Add blocks when full, Take
+           *   blocks when empty; CompleteAdding signals producers finished; wraps a
+           *   concurrent collection (default ConcurrentQueue).
+           *
+           * System.Collections.Immutable — ImmutableArray<T>, ImmutableList<T>,
+           *   ImmutableDictionary<,>, ImmutableHashSet<T>, …; builder pattern or factory
+           *   methods; structural sharing for cheap snapshots; safe to share if no
+           *   mutable builder escapes.
+           *
+           * System.Collections.Frozen (.NET 8+) — FrozenDictionary.ToFrozenDictionary,
+           *   FrozenSet.ToFrozenSet; optimized read-only lookup after one-time build from
+           *   mutable data; best for static configuration keys, not churny maps.
+           *
+           * 
+           *
+           * -----------------------------------------------------------------------------
+           * 11. ENUMERATION, foreach, AND SAFETY
+           * -----------------------------------------------------------------------------
+           *
+           * foreach compiles to GetEnumerator + MoveNext + Current + Dispose pattern.
+           * Most BCL collections track a "version" stamp; structural change during active
+           * enumeration throws InvalidOperationException. Safe patterns: snapshot with
+           * ToArray / ToList / new List<T>(source), iterate indices on List and only remove
+           * from high index to low, or use removal APIs that return next position.
+           *
+           * IEnumerator.Reset — implemented for completeness; many enumerators throw
+           *   NotSupportedException on Reset. Do not depend on Reset; create a new
+           *   enumerator or re-enter foreach.
+           *
+           * List<T>.Enumerator is a struct (value type enumerator) — avoids allocation in
+           *   foreach over List<T> in typical cases. IEnumerable<T> as a parameter loses
+           *   that optimization (boxing to interface).
+           *
+           * -----------------------------------------------------------------------------
+           * 12. LINQ (System.Linq) AND IEnumerable<T>
+           * -----------------------------------------------------------------------------
+           *
+           * Extension methods: Where, Select, SelectMany, OrderBy, GroupBy, Join, Take,
+           *   Skip, Distinct, Any, All, First, Single, … Deferred execution: Where returns
+           *   IEnumerable<T> that runs the predicate when the consumer enumerates.
+           *   Immediate: ToList, ToArray, ToDictionary, ToHashSet, Count(), Max(), …
+           *   allocate or fully consume the sequence.
+           *
+           * IQueryable<T> (System.Linq) — expression trees for remote providers (EF Core);
+           *   not a collection storage type; different execution model from IEnumerable.
+           *
+           * Hot paths: repeated enumeration of deferred chains re-runs work; materialize
+           *   once if you need multiple passes. Prefer for loops on List<T> over LINQ when
+           *   profiling shows allocation or delegate overhead.
+           *
+           * -----------------------------------------------------------------------------
+           * 13. EQUALITY, ORDERING, AND KEYS
+           * -----------------------------------------------------------------------------
+           *
+           * IEqualityComparer<T>: bool Equals(T x, T y); int GetHashCode(T obj). Contract:
+           *   if Equals(a,b) then GetHashCode(a)==GetHashCode(b); hash should distribute
+           *   values across int. Used by Dictionary, HashSet, ConcurrentDictionary.
+           *
+           * Mutable objects as dictionary keys are dangerous: if a field used in Equals or
+           *   GetHashCode changes after Add, lookups fail (entry stays in wrong bucket).
+           *   Prefer string, int, Guid, immutable records, or readonly structs as keys.
+           *
+           * IComparer<T>: int Compare(T x, T y); defines strict weak ordering for SortedSet,
+           *   SortedDictionary, SortedList, Array.Sort, OrderBy(comparer). If Compare
+           *   inconsistent with Equals, structures and binary search misbehave.
+           *
+           * Records / value equality: default equality for records uses value semantics;
+           *   still ensure stable hash if used as keys in long-lived maps.
+           *
+           * -----------------------------------------------------------------------------
+           * 14. CAPACITY, MEMORY, AND GC
+           * -----------------------------------------------------------------------------
+           *
+           * List<T>, Dictionary<,>, HashSet<T>, Queue<T>, Stack<T>, PriorityQueue<,> expose
+           *   EnsureCapacity(int) and TrimExcess() on supported runtimes — grow internal
+           *   buffers ahead of a large Add loop; shrink after a temporary spike if you keep
+           *   the collection for a long time with few elements.
+           *
+           * Dictionary / HashSet load factor triggers rehash when growth occurs — pre-
+           *   sizing avoids repeated rehashing when you know approximate final Count.
+           *
+           * Large object heap (LOH): very large arrays/lists may land on LOH; different GC
+           *   behavior. For huge sequences consider chunking, streaming, or out-of-core.
+           *
+           * =============================================================================
+           * END OF OVERVIEW — practice: GenericCollections (per-type demos + interview
+           * notes); ConcurrentCollections (thread-safe types). Re-read TAKEAWAY before
+           * interviews; use sections 9–10 for trade-off questions.
+           * =============================================================================
+           */
+
+        #endregion
 
         public static void Main(string[] args)
         {
@@ -89,6 +739,7 @@ namespace ConsoleApp1.CSharpPractise.DataStructures.Collections
         {   //Initialize
             // 1) Initialization
             List<string> names = new List<string>() { "Krishna", "Hari" };
+
 
             // 2) Add / Insert
             names.Add("Sri Rama");                    // add single
@@ -244,6 +895,14 @@ namespace ConsoleApp1.CSharpPractise.DataStructures.Collections
     > "`LinkedList<T>` is a doubly-linked list in C#: $O(1)$ insert and remove at the ends or adjacent to a known `LinkedListNode<T>`, but $O(n)$ search by value. It has no indexer or array-style capacity, so it complements `List<T>` when your algorithm is node-driven rather than index-driven."
         */
         #endregion
+         /* REMEMBER POINTS(from your mistakes):
+             * 1. Use?. (null-conditional) when a node / reference may be null — e.g.names.First?.Value, names.Last?.Value(empty LinkedList → First/Last is null).
+             * 2. BinarySearch only works on ascending sorted order — Sort first, search, then Reverse if needed; never search after Reverse().
+             * 3. LinkedList has no indexer — use First/Last and walk with.Next(forward) or.Previous(backward); first N nodes = .Next from head
+             * 4.Start each node walk fresh from names.First or names.Last; use 0-based index when printing[0], [1], …
+             * 5. No bulk append on LinkedList — loop a sequence and AddLast each item.
+             * 6. Remove(node) is O(1) when you already hold the node; Remove(value) scans the list O(n).
+             * 7. Do not modify during foreach — catch InvalidOperationException outside the loop.  */
         public void ShowLinkedList()
         {
             // 1) Initialization
@@ -1111,7 +1770,7 @@ namespace ConsoleApp1.CSharpPractise.DataStructures.Collections
             }
             idToName[2] = "HariUpdated";
 
-            // 3) TryAdd / merge another map
+            // 3) TryAdd / merge another map  
             foreach (var kv in new Dictionary<int, string> { { 4, "Anu" }, { 6, "Ravi" } })
                 idToName.TryAdd(kv.Key, kv.Value);
             idToName.TryAdd(4, "ShouldNotReplace");
@@ -1191,6 +1850,7 @@ namespace ConsoleApp1.CSharpPractise.DataStructures.Collections
 
             idToName.Clear();
             Console.WriteLine("Cleared. Count: " + idToName.Count);
+
         }
 
         #region
@@ -1427,11 +2087,11 @@ namespace ConsoleApp1.CSharpPractise.DataStructures.Collections
         public void ShowHashSet()
         {
             // 1) Initialization
-            var names = new HashSet<string>
+            var names = new HashSet<string>   
             {
-                "Krishna",
+                "Krishna", 
                 "Hari"
-            };
+            };   
 
             // 2) Add — returns false if duplicate
             Console.WriteLine("Add Sri Rama: " + names.Add("Sri Rama"));
@@ -1440,12 +2100,12 @@ namespace ConsoleApp1.CSharpPractise.DataStructures.Collections
             // 3) "AddRange" — UnionWith copies all from another set / sequence
             var more = new HashSet<string> { "Anu", "Ravi" };
             names.UnionWith(more);
-            names.UnionWith(new[] { "X", "Y" });
+            names.UnionWith(new[] { "X", "Y" });   //remember unionwith in hashset
 
             // 4) Count / capacity
             Console.WriteLine($"Count: {names.Count}");
             names.EnsureCapacity(64);
-            names.TrimExcess();
+            names.TrimExcess(); // no effect if Count is close to capacity; otherwise may reduce memory usage
 
             // 5) Contains — no indexer
             Console.WriteLine("Contains Hari? " + names.Contains("Hari"));
@@ -1691,3 +2351,4 @@ namespace ConsoleApp1.CSharpPractise.DataStructures.Collections
 
     }
 }
+
