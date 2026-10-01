@@ -187,6 +187,19 @@ Iterator Interfaces (Standalone Hierarchy):
 │ ImmutableArray<T>       │
 └─────────────────────────┘
 
+        Modifier          Meaning in one line
+        ────────────────  ──────────────────────────────────────────────────────────────
+        Sorted            Auto-maintains order
+        Immutable         Never changes; "edits" create a new copy
+        ImmutableSorted   Never changes + stays ordered
+        ReadOnly          Can't edit through this view; underlying data can still change
+        Frozen            Immutable + max-speed reads (build once, read forever)
+        Concurrent        Safe for simultaneous multi-thread access
+        Observable        Notifies listeners (usually UI) on change
+        Keyed             List + dictionary lookup combined
+        Binding           Legacy UI-notification list (WinForms)
+
+
   PARENT CHEATSHEET (climb arrows to IEnumerable)
   ───────────────────────────────────────────────
   Queue<T>/Stack<T>       → IReadOnlyCollection<T> → IEnumerable<T> → IEnumerable

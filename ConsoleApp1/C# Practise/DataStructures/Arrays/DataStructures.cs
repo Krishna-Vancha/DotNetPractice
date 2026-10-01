@@ -15,7 +15,7 @@ namespace ConsoleApp1.CSharpPractise.DataStructures.Arrays
             ArrayInbuiltFunctions();
         }
 
-        // Arrays: syntax, Range/Span, System.Array — see `PointsToRemember.md` in the repository root (section **Programming → Arrays**).
+        // Arrays: syntax, Range/Span, System.Array — see InterviewNotes/PointsToRemember.cs (section Programming → Arrays).
 
         public static void showOneDimensionalArrays()
         {

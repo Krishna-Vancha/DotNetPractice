@@ -13,9 +13,9 @@ public class RootProgram
         // Call one runner, e.g. StringEntryLevelPracticeRunners.RunCharacterFrequency(); or all:
         //  StringEntryLevelPracticeRunners.RunIsPalindrome();
 
-        Practise.Main(new string[] { });   //System.Array.Empty<string>()
-       
+        Practise.Main(args);   // pass CLI: dotnet run -- arrays 5
+         
 
 
-    }
+    } 
 }

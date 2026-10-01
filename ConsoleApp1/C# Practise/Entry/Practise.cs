@@ -1,6 +1,8 @@
-﻿using ConsoleApp1.C__Practise.Misc;
+﻿using ConsoleApp1.C__Practise.C_Basics;
+using ConsoleApp1.C__Practise.Misc;
 using ConsoleApp1.C__Practise.OOPs_Concepts;
 using ConsoleApp1.C__Practise.Programming;
+using ConsoleApp1.C__Practise.PYnative;
 using ConsoleApp1.CSharpPractise.Advanced;
 using System;
 using System.Collections.Generic;
@@ -15,6 +17,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
+using Employee = ConsoleApp1.C__Practise.Misc.Employee;
+using Manager = ConsoleApp1.C__Practise.Misc.Manager;
 
 namespace ConsoleApp1.C__Practise.Entry
 {
@@ -40,9 +44,171 @@ namespace ConsoleApp1.C__Practise.Entry
 
         public static void Main(string[] args)
         {
-            TOPPrograms.ReverseInteger();
+            //// ── PYnative: set topic + exercise # (matches "Question N" in *Exercises.cs) ──
+            //const PynativeTopic Topic = PynativeTopic.Oop;
+            //const int Exercise = 39;   // 0 = all exercises in topic — match Question N in OOP/OopExercises.cs
 
+            //const PynativeTopic Topic = PynativeTopic.Strings;
+            //const int Exercise = 3;
+
+            //const PynativeTopic Topic = PynativeTopic.Arrays;
+            //const int Exercise = 3;
+
+            const PynativeTopic Topic = PynativeTopic.Linq;
+            const int Exercise = 32;
+
+            // OOP (1–39) — PYnative/OOP/OopExercises.cs
+            //   1 Watch   2 Book ctors   3 Readonly account   4 Singleton   5 Thermostat
+            //   6 Internal discount   7 Static MathWizard   8 Finalizer   9 Masked password
+            //  10 Init rectangle  11 Odometer  12 Validated temp  13 Circle area  14 Flight seat
+            //  15 Hero health  16 Savings bonus  17 Vehicles  18 Sealed auth  19 Payroll
+            //  20 base() student  21 Sealed Move  22 Zoo sounds  23 new shadow  24 Appliance chain
+            //  25 UI canvas  26 Abstract DB  27 Shapes  28 Latte  29 Document parse  30 PayPal
+            //  31 Enemy AI  32 Printer+Scanner  33 Explicit turns  34 Default logger  35 Plugins
+            //  36 IComparable  37 IDisposable  38 Flying boat  39 Explicit IAdmin
+
+            //const PynativeTopic Topic = PynativeTopic.Generics;
+            //const int Exercise = 1;
+
+            // Generics (1–20) — PYnative/Generics/GenericExercises.cs
+            //   1 Box   2 Swap   3 Pair   4 PrintList   5 Reverse   6 FindMax   7 Repository
+            //   8 Factory new()   9 Stack   10 FindById   11 Optional struct   12 Multi-constraint repo
+            //  13 Validator   14 Cache TTL   15 ConvertType   16 Covariant out   17 Contravariant in
+            //  18 MessageEvent   19 Filter ext   20 Specification AND
+
+            if (args.Length > 0)
+                PynativeExercisesEntry.RunFromArgs(args);
+            else
+                PynativeExercisesEntry.Run(Topic, Exercise);
+
+            
         }
+
+        /*
+         * PYnative practice workflow:
+         * 1. OOP: read Exercise block in OOP/OopExercises.cs, add your classes at bottom, implement RunExerciseNN(). Other topics: replace NotImplementedException in *Exercises.cs.
+         * 2. Set Run(PynativeTopic.X, n) in Main(), pass CLI args, or call TestPYnative_* below.
+         * 3. Console shows the question, your output, and PASS/FAIL/SKIP for every case.
+         */
+
+        public static void TestPYnative_Run(PynativeTopic topic, int exercise = 0) =>
+            PynativeExercisesEntry.Run(topic, exercise);
+
+        // ── PYnative: Arrays (1–30) ──
+        public static void TestPYnative_Array_01() => PynativeExercisesEntry.Run(PynativeTopic.Arrays, 1);
+        public static void TestPYnative_Array_05() => PynativeExercisesEntry.Run(PynativeTopic.Arrays, 5);
+        public static void TestPYnative_Arrays_All() => PynativeExercisesEntry.Run(PynativeTopic.Arrays, 0);
+
+        // ── PYnative: LINQ (1–40) ──
+        public static void TestPYnative_Linq_01() => PynativeExercisesEntry.Run(PynativeTopic.Linq, 1);
+        public static void TestPYnative_Linq_10() => PynativeExercisesEntry.Run(PynativeTopic.Linq, 10);
+        public static void TestPYnative_Linq_All() => PynativeExercisesEntry.Run(PynativeTopic.Linq, 0);
+
+        // ── PYnative: OOP (1–39) ──
+        public static void TestPYnative_Oop_01() => PynativeExercisesEntry.Run(PynativeTopic.Oop, 1);
+        public static void TestPYnative_Oop_17() => PynativeExercisesEntry.Run(PynativeTopic.Oop, 17);
+        public static void TestPYnative_Oop_All() => PynativeExercisesEntry.Run(PynativeTopic.Oop, 0);
+
+        // ── PYnative: Generics (1–20) ──
+        public static void TestPYnative_Generics_01() => PynativeExercisesEntry.Run(PynativeTopic.Generics, 1);
+        public static void TestPYnative_Generics_06() => PynativeExercisesEntry.Run(PynativeTopic.Generics, 6);
+        public static void TestPYnative_Generics_All() => PynativeExercisesEntry.Run(PynativeTopic.Generics, 0);
+
+        // ── PYnative: Strings (1–30) ──
+        public static void TestPYnative_String_01() => PynativeExercisesEntry.RunStringExercise(1);
+        public static void TestPYnative_String_02() => PynativeExercisesEntry.RunStringExercise(2);
+        public static void TestPYnative_String_03() => PynativeExercisesEntry.RunStringExercise(3);
+        public static void TestPYnative_String_04() => PynativeExercisesEntry.RunStringExercise(4);
+        public static void TestPYnative_String_05() => PynativeExercisesEntry.RunStringExercise(5);
+        public static void TestPYnative_String_06() => PynativeExercisesEntry.RunStringExercise(6);
+        public static void TestPYnative_String_07() => PynativeExercisesEntry.RunStringExercise(7);
+        public static void TestPYnative_String_08() => PynativeExercisesEntry.RunStringExercise(8);
+        public static void TestPYnative_String_09() => PynativeExercisesEntry.RunStringExercise(9);
+        public static void TestPYnative_String_10() => PynativeExercisesEntry.RunStringExercise(10);
+        public static void TestPYnative_String_11() => PynativeExercisesEntry.RunStringExercise(11);
+        public static void TestPYnative_String_12() => PynativeExercisesEntry.RunStringExercise(12);
+        public static void TestPYnative_String_13() => PynativeExercisesEntry.RunStringExercise(13);
+        public static void TestPYnative_String_14() => PynativeExercisesEntry.RunStringExercise(14);
+        public static void TestPYnative_String_15() => PynativeExercisesEntry.RunStringExercise(15);
+        public static void TestPYnative_String_16() => PynativeExercisesEntry.RunStringExercise(16);
+        public static void TestPYnative_String_17() => PynativeExercisesEntry.RunStringExercise(17);
+        public static void TestPYnative_String_18() => PynativeExercisesEntry.RunStringExercise(18);
+        public static void TestPYnative_String_19() => PynativeExercisesEntry.RunStringExercise(19);
+        public static void TestPYnative_String_20() => PynativeExercisesEntry.RunStringExercise(20);
+        public static void TestPYnative_String_21() => PynativeExercisesEntry.RunStringExercise(21);
+        public static void TestPYnative_String_22() => PynativeExercisesEntry.RunStringExercise(22);
+        public static void TestPYnative_String_23() => PynativeExercisesEntry.RunStringExercise(23);
+        public static void TestPYnative_String_24() => PynativeExercisesEntry.RunStringExercise(24);
+        public static void TestPYnative_String_25() => PynativeExercisesEntry.RunStringExercise(25);
+        public static void TestPYnative_String_26() => PynativeExercisesEntry.RunStringExercise(26);
+        public static void TestPYnative_String_27() => PynativeExercisesEntry.RunStringExercise(27);
+        public static void TestPYnative_String_28() => PynativeExercisesEntry.RunStringExercise(28);
+        public static void TestPYnative_String_29() => PynativeExercisesEntry.RunStringExercise(29);
+        public static void TestPYnative_String_30() => PynativeExercisesEntry.RunStringExercise(30);
+        public static void TestPYnative_Strings_All() => PynativeExercisesEntry.RunStrings();
+        public static void TestPYnative_Catalog() => PynativeExercisesEntry.PrintTopicCatalog();
+
+        /*
+         * TOPPrograms practice workflow:
+         * 1. Open Programming/TOPPrograms.cs and implement one method (replace NotImplementedException).
+         * 2. Uncomment the matching Test* call below (or use TOPProgramTests directly) and run from RootProgram.
+         * 3. All test cases for that method must PASS before moving on.
+         *
+         * Demo-only methods (OOP, async, EF, etc.) have no automated tests — call RunTOPProgramsDemo_* instead.
+         */
+
+        // ── Section 1: Numbers ──
+        public static void TestTOPPrograms_ConvertVeryLargeNumericString() => TOPProgramTests.TestConvertVeryLargeNumericString();
+        public static void TestTOPPrograms_AddTwoLargeNumberStrings() => TOPProgramTests.TestAddTwoLargeNumberStrings();
+        public static void TestTOPPrograms_TryParseIntSafely() => TOPProgramTests.TestTryParseIntSafely();
+        public static void TestTOPPrograms_ReverseInteger() => TOPProgramTests.TestReverseInteger();
+        public static void TestTOPPrograms_IsIntegerPalindrome() => TOPProgramTests.TestIsIntegerPalindrome();
+        public static void TestTOPPrograms_DivideWithoutMultiplyOrDivide() => TOPProgramTests.TestDivideWithoutMultiplyOrDivide();
+        public static void TestTOPPrograms_IntegerPow() => TOPProgramTests.TestIntegerPow();
+        public static void TestTOPPrograms_DetectIntegerOverflowOnAdd() => TOPProgramTests.TestDetectIntegerOverflowOnAdd();
+        public static void TestTOPPrograms_DecimalToDoublePrecisionLoss() => TOPProgramTests.TestDecimalToDoublePrecisionLoss();
+        public static void TestTOPPrograms_CurrencyRounding() => TOPProgramTests.TestCurrencyRounding();
+        public static void TestTOPPrograms_Section1_Numbers() => TOPProgramTests.RunSection1();
+
+        // ── Section 2: Strings ──
+        public static void TestTOPPrograms_ReverseStringManually() => TOPProgramTests.TestReverseStringManually();
+        public static void TestTOPPrograms_IsStringPalindrome() => TOPProgramTests.TestIsStringPalindrome();
+        public static void TestTOPPrograms_CountCharacterOccurrences() => TOPProgramTests.TestCountCharacterOccurrences();
+        public static void TestTOPPrograms_FirstNonRepeatingCharacter() => TOPProgramTests.TestFirstNonRepeatingCharacter();
+        public static void TestTOPPrograms_AreAnagrams() => TOPProgramTests.TestAreAnagrams();
+        public static void TestTOPPrograms_CustomStringTrim() => TOPProgramTests.TestCustomStringTrim();
+        public static void TestTOPPrograms_HasBalancedParentheses() => TOPProgramTests.TestHasBalancedParentheses();
+        public static void TestTOPPrograms_CompressString() => TOPProgramTests.TestCompressString();
+        public static void TestTOPPrograms_LongestCommonSubstringOrPrefix() => TOPProgramTests.TestLongestCommonSubstringOrPrefix();
+        public static void TestTOPPrograms_SplitOnMultipleDelimiters() => TOPProgramTests.TestSplitOnMultipleDelimiters();
+        public static void TestTOPPrograms_Section2_Strings() => TOPProgramTests.RunSection2();
+
+        // ── Section 3: Arrays ──
+        public static void TestTOPPrograms_FindDuplicatesInArray() => TOPProgramTests.TestFindDuplicatesInArray();
+        public static void TestTOPPrograms_FindMissingNumber() => TOPProgramTests.TestFindMissingNumber();
+        public static void TestTOPPrograms_RotateArray() => TOPProgramTests.TestRotateArray();
+        public static void TestTOPPrograms_SecondLargestWithoutSorting() => TOPProgramTests.TestSecondLargestWithoutSorting();
+        public static void TestTOPPrograms_MergeSortedArrays() => TOPProgramTests.TestMergeSortedArrays();
+        public static void TestTOPPrograms_ArrayIntersection() => TOPProgramTests.TestArrayIntersection();
+        public static void TestTOPPrograms_FlattenJaggedArray() => TOPProgramTests.TestFlattenJaggedArray();
+        public static void TestTOPPrograms_FindPairsThatSumToTarget() => TOPProgramTests.TestFindPairsThatSumToTarget();
+        public static void TestTOPPrograms_MaxSubarraySumKadane() => TOPProgramTests.TestMaxSubarraySumKadane();
+        public static void TestTOPPrograms_Section3_Arrays() => TOPProgramTests.RunSection3();
+
+        // ── Section 4: LINQ ──
+        public static void TestTOPPrograms_Section4_Linq() => TOPProgramTests.RunSection4();
+
+        // ── Section 13: Collections ──
+        public static void TestTOPPrograms_Section13_Collections() => TOPProgramTests.RunSection13();
+
+        // ── Run all automated TOPPrograms tests ──
+        public static void TestTOPPrograms_All() => TOPProgramTests.RunAll();
+
+        // ── Demo-only exercises (no automated tests — implement and run manually) ──
+        public static void RunTOPProgramsDemo_OOP() { TOPPrograms.OverrideVsNew(); TOPPrograms.AbstractClassVsInterface(); TOPPrograms.BoxingUnboxing(); }
+        public static void RunTOPProgramsDemo_Async() { TOPPrograms.TaskRunVsAsyncMethod(); TOPPrograms.AwaitInLoopVsWhenAll(); }
+        public static void RunTOPProgramsDemo_Exceptions() { TOPPrograms.NestedTryCatchFinally(); TOPPrograms.ThrowVsThrowEx(); }
+        public static void RunTOPProgramsDemo_DesignPatterns() { TOPPrograms.ThreadSafeSingleton(); TOPPrograms.FactoryPattern(); TOPPrograms.StrategyPattern(); }
         public static bool IsValidNumber(string str)
         {
             bool isvalid = true;

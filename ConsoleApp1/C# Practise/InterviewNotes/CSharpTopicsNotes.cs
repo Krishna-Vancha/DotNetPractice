@@ -1,3 +1,9 @@
+namespace ConsoleApp1.C__Practise.InterviewNotes;
+
+/// <summary>Interview notes migrated from CSharpTopicsNotes.md.</summary>
+internal static class CSharpTopicsNotes
+{
+    public const string Notes = """
 # C# notes
 
 ## Topics
@@ -947,3 +953,5 @@ Func<int, int, int> add = (x, y) => x + y;
 public event EventHandler? Something;
 protected void OnSomething() => Something?.Invoke(this, EventArgs.Empty);
 ```
+""";
+}

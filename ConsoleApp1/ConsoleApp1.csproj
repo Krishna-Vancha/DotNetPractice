@@ -9,11 +9,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="bin\Debug\net10.0\ConsoleApp1.deps.json" />
+    <Content Include="bin\Debug\net10.0\ConsoleApp1.runtimeconfig.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="C# Practise\DataStructures\Arrays\" />
     <Folder Include="C# Practise\DataStructures\Collections\" />
     <Folder Include="C# Practise\DataStructures\Strings\" />
     <Folder Include="C# Practise\DataStructures\Tuples\" />
     <Folder Include="C# Practise\ValueTypes\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Debug\net10.0\ConsoleApp1.dll" />
+    <None Include="bin\Debug\net10.0\ConsoleApp1.exe" />
+    <None Include="bin\Debug\net10.0\ConsoleApp1.pdb" />
   </ItemGroup>
 
 </Project>

@@ -1,3 +1,9 @@
+namespace ConsoleApp1.C__Practise.InterviewNotes;
+
+/// <summary>Interview notes migrated from MicrosoftSqlNotes.md.</summary>
+internal static class MicrosoftSqlNotes
+{
+    public const string Notes = """
 # Microsoft SQL Server Notes
 
 ## Index
@@ -431,3 +437,5 @@ WITH
 `WHERE` vs `HAVING`, `DELETE` vs `TRUNCATE`, `UNION` vs `UNION ALL`, `RANK` vs `DENSE_RANK`, `COUNT(*)` vs `COUNT(column)`, `NULL` comparison, left join filter placement, clustered vs nonclustered index, transaction rollback handling, `IDENTITY` vs primary key, `CHAR` vs `VARCHAR`, `NVARCHAR` vs `VARCHAR`, CTE vs temp table, `EXISTS` vs `IN`, blocking vs deadlock.
 
 **Final revision line:** SQL interviews usually test fundamentals first: schema design, joins, grouping, transactions, indexes, query plans, and safe data modification.
+""";
+}

@@ -6,7 +6,7 @@ namespace ConsoleApp1.CSharpPractise.DataStructures.Strings
 {
     internal class StringsPractice
     {
-        // Revision checklist: `PointsToRemember.md` (repository root, next to the solution folder).
+        // Revision checklist: InterviewNotes/PointsToRemember.cs
 
         public static void Main(string[] args)
         {

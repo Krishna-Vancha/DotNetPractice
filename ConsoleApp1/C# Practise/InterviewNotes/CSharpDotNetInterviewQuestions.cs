@@ -1,3 +1,9 @@
+namespace ConsoleApp1.C__Practise.InterviewNotes;
+
+/// <summary>Interview notes migrated from CSharpDotNetInterviewQuestions.md.</summary>
+internal static class CSharpDotNetInterviewQuestions
+{
+    public const string Notes = """
 # C# / .NET — coding practice questions (problem-style)
 
 **~115** small programming tasks (like coding rounds / LeetCode-style), grouped by topic. Within each topic, problems are split into **Entry level** and **Advanced**. Implement in C#; use whatever structures you prefer unless noted.
@@ -260,3 +266,5 @@
 ---
 
 *Tip: For each problem, practice: edge cases (empty, null, single element), time/space complexity, and a clean C# signature (`ReadOnlySpan<char>` for hot string paths if you want extra practice).*
+""";
+}

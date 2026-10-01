@@ -1,3 +1,9 @@
+namespace ConsoleApp1.C__Practise.InterviewNotes;
+
+/// <summary>Interview notes migrated from MicrosoftSqlQuestions.md.</summary>
+internal static class MicrosoftSqlQuestions
+{
+    public const string Notes = """
 # Microsoft SQL Server Interview Questions And Syntax Practice
 
 Practice these by writing the SQL yourself first, then compare with the syntax reminders. Questions move from basic database creation to DDL, DML, DQL, TCL, DCL, joins, functions, procedures, indexing, and interview scenarios.
@@ -1290,3 +1296,5 @@ WHERE CreatedAt >= '20260101'
 140. What should you inspect for slow query troubleshooting?
 
 **Answer:** actual execution plan, indexes, statistics, row estimates vs actual rows, waits/blocking, reads, CPU, duration, and query predicates.
+""";
+}

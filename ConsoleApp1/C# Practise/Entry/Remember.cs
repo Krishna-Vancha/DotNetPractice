@@ -22,7 +22,7 @@ namespace ConsoleApp1.C__Practise.Entry
          
          
          
-         
+         With method hiding (new), the compiler decides which method to call by looking at the variable's declared type,
          
          
          # 100 C# / .NET Interview Coding Questions (Mid-Level)

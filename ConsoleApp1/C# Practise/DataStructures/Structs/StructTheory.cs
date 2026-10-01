@@ -20,7 +20,7 @@ namespace ConsoleApp1.C__Practise.DataStructures.Structs
     public class StructTheory
     {
         // ----------------------------------------------------------------------------------------------------
-        // Struct theory (same content as CSharpTopicsNotes.md – quick revision)
+        // Struct theory (same content as InterviewNotes/CSharpTopicsNotes.cs – quick revision)
         // ----------------------------------------------------------------------------------------------------
         #region Struct theory – notes and syntax
         // --- 1. What a struct is
